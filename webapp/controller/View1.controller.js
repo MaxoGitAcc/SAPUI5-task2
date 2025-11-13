@@ -1,14 +1,18 @@
 sap.ui.define([
     "project1/controller/BaseController",
-    "sap/ui/model/json/JSONModel"
-], (BaseController, JSONModel) => {
+    "sap/ui/model/json/JSONModel",
+    "sap/ui/model/Filter",
+    "sap/ui/model/FilterOperator"
+], (BaseController, JSONModel, Filter, FilterOperator) => {
     "use strict";
 
     return BaseController.extend("project1.controller.View1", {
         onInit() {
-            var oBookModel = new JSONModel(jQuery.sap.getModulePath("project1.model.books", ".json"));
-
+            var oBookModel = new JSONModel()
+            oBookModel.loadData(jQuery.sap.getModulePath("project1.model.books", ".json"));
             this.getView().setModel(oBookModel, "bookModel1");
+
+            this._selectedGenre = "All"
         },
         
         //Search
@@ -17,15 +21,17 @@ sap.ui.define([
             var oTable = this.byId("bookTable");
             var oBinding = oTable.getBinding("items");
 
-            if(sQuery) {
-                var oFilter = new sap.ui.model.Filter("Name", sap.ui.model.FilterOperator.Contains, sQuery);
-                oBinding.filter([oFilter]);
-            } else {
-                oBinding.filter([])
+            var aFilters = [];
+
+            if (sQuery) {
+                aFilters.push(new Filter("Name", FilterOperator.Contains, sQuery));
             }
-            console.log("Search triggered:", sQuery);
-            console.log("Table:", oTable);
-            console.log("Binding:", oBinding);
+            //Combained Filter and Search
+            if (this._selectedGenre && this._selectedGenre !== "All") {
+                aFilters.push(new Filter("Genre", FilterOperator.EQ, this._selectedGenre));
+            }
+
+            oBinding.filter(aFilters);
         },
 
         //Buttons
@@ -59,6 +65,27 @@ sap.ui.define([
             });
 
             oModel.setProperty("/books", aBooks)
+        },
+
+        //Filter
+        onGenreChange: function(oEvent) {
+            this._selectedGenre = oEvent.getParameter("selectedItem").getKey();
+        },
+
+        onApplyFilter: function() {
+            var oTable = this.byId("bookTable");
+            var oBinding = oTable.getBinding("items");
+
+            var aFilters = [];
+            var sQuery = this.byId("searchField").getValue();
+            if(sQuery) {
+                aFilters.push(new Filter("Name", FilterOperator.Contains, sQuery))
+            }
+            if(this._selectedGenre && this._selectedGenre !== "All") {
+                aFilters.push(new Filter("Genre", FilterOperator.EQ, this._selectedGenre))
+            }
+
+            oBinding.filter(aFilters);
         }
     });
 });

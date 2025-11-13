@@ -1,6 +1,7 @@
 <mvc:View controllerName="project1.controller.View1"
     xmlns:mvc="sap.ui.core.mvc"
-    xmlns="sap.m">
+    xmlns="sap.m"
+    xmlns:core="sap.ui.core">
     <Page id="page" title="{i18n>title}">
         <content>
             <VBox class="sapUiSmallMergin">
@@ -22,6 +23,21 @@
 
                             <Button text="Add Record" press=".onAddRecord" type="Accept"/>
                             <Button text="Delete Record" press=".onDeleteRecord" type="Reject"></Button>
+
+                            <ToolbarSeparator />
+
+                            <Select id="genreSelect" change=".onGenreChange" width="150px">
+                                <items>
+                                    <core:Item key="All" text="All Genres" />
+                                    <core:Item key="Epic" text="Epic"/>
+                                    <core:Item key="Novel" text="Novel"/>
+                                    <core:Item key="Historical" text="Historical"/>
+                                    <core:Item key="Drama" text="Drama"/>
+                                    <core:Item key="Biography" text="Biography"/>
+                                </items>
+                            </Select>
+
+                            <Button text="Filter" press=".onApplyFilter" type="Emphasized"/>
                         </Toolbar>
                     </headerToolbar>
 
