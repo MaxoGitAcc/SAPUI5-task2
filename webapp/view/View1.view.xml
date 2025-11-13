@@ -12,11 +12,16 @@
                         placeholder="Search by title..."
                         search=".onSearch"/>
                 </Toolbar>
-                <Table id="bookTable" items="{bookModel1>/books}">
+                <Table id="bookTable" items="{bookModel1>/books}" mode="MultiSelect">
 
                     <headerToolbar>
-                        <Toolbar id="bookTableToolvbar">
+                        <Toolbar id="bookTableToolbar">
                             <Title id="bookTableTitle" text="Books" />
+
+                            <ToolbarSpacer />
+
+                            <Button text="Add Record" press=".onAddRecord" type="Accept"/>
+                            <Button text="Delete Record" press=".onDeleteRecord" type="Reject"></Button>
                         </Toolbar>
                     </headerToolbar>
 

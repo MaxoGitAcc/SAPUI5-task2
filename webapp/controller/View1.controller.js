@@ -1,10 +1,10 @@
 sap.ui.define([
-    "sap/ui/core/mvc/Controller",
+    "project1/controller/BaseController",
     "sap/ui/model/json/JSONModel"
-], (Controller, JSONModel) => {
+], (BaseController, JSONModel) => {
     "use strict";
 
-    return Controller.extend("project1.controller.View1", {
+    return BaseController.extend("project1.controller.View1", {
         onInit() {
             var oBookModel = new JSONModel(jQuery.sap.getModulePath("project1.model.books", ".json"));
 
@@ -26,7 +26,39 @@ sap.ui.define([
             console.log("Search triggered:", sQuery);
             console.log("Table:", oTable);
             console.log("Binding:", oBinding);
+        },
 
+        //Buttons
+        onAddRecord: function() {
+            var oModel = this.getModel("bookModel1");
+            var aBooks = oModel.getProperty("/books");
+
+            aBooks.push({
+                ID:aBooks.length + 1,
+                Name: "",
+                Author: "",
+                Genre: "",
+                ReleaseDate: "",
+                AvailableQuantity: 0
+            });
+
+            oModel.setProperty("/books", aBooks)
+        },
+
+        onDeleteRecord: function() {
+            var oTable = this.byId("bookTable");
+            var aSelectedItems = oTable.getSelectedItems();
+            var oModel = this.getModel("bookModel1");
+            var aBooks = oModel.getProperty("/books");
+
+            aSelectedItems.forEach(function(oItem) {
+                var oContext = oItem.getBindingContext("bookModel1");
+                var sPath = oContext.getPath();
+                var iIndex = parseInt(sPath.split("/")[2]);
+                aBooks.splice(iIndex, 1);
+            });
+
+            oModel.setProperty("/books", aBooks)
         }
     });
 });
