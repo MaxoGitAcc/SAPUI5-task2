@@ -1,0 +1,45 @@
+{
+    "books": [
+      {
+        "ID": 1,
+        "Name": "Vepkhistkaosani",
+        "Author": "Shota Rustaveli",
+        "Genre": "Epic",
+        "ReleaseDate": "1200-01-01",
+        "AvailableQuantity": 10
+      },
+      {
+        "ID": 2,
+        "Name": "Data Tutashkhia",
+        "Author": "Chabua Amirejibi",
+        "Genre": "Novel",
+        "ReleaseDate": "1973-01-01",
+        "AvailableQuantity": 7
+      },
+      {
+        "ID": 3,
+        "Name": "Mtvaris Motatseba",
+        "Author": "Mikheil Javakhishvili",
+        "Genre": "Historical",
+        "ReleaseDate": "1924-01-01",
+        "AvailableQuantity": 5
+      },
+      {
+        "ID": 4,
+        "Name": "Natvris Khe",
+        "Author": "Nodar Dumbadze",
+        "Genre": "Drama",
+        "ReleaseDate": "1973-01-01",
+        "AvailableQuantity": 8
+      },
+      {
+        "ID": 5,
+        "Name": "Grigol Khanztheli",
+        "Author": "Ilia Chavchavadze",
+        "Genre": "Biography",
+        "ReleaseDate": "1861-01-01",
+        "AvailableQuantity": 6
+      }
+    ]
+  }
+  
