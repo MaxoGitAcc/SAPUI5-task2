@@ -35,20 +35,79 @@ sap.ui.define([
         },
 
         //Buttons
-        onAddRecord: function() {
+        _createAddDialog: function () {
+            if (!this._oAddDialog) {
+                this._oAddDialog = new sap.m.Dialog({
+                    title: "Add New Book",
+                    contentWidth: "400px",
+                    type: "Message",
+                    content: [
+                        new sap.m.VBox({
+                            items: [
+                                new sap.m.Input({ placeholder: "Name", id: this.createId("newName") }),
+                                new sap.m.Input({ placeholder: "Author", id: this.createId("newAuthor") }),
+                                new sap.m.Input({ placeholder: "Genre", id: this.createId("newGenre") }),
+                                new sap.m.Input({ placeholder: "Release Date (YYYY-MM-DD)", id: this.createId("newDate") }),
+                                new sap.m.Input({ placeholder: "Available Quantity", type: "Number", id: this.createId("newQuantity") })
+                            ]
+                        })
+                    ],
+                    beginButton: new sap.m.Button({
+                        text: "Add",
+                        press: function () {
+                            this._saveNewBook();
+                        }.bind(this)
+                    }),
+                    endButton: new sap.m.Button({
+                        text: "Cancel",
+                        press: function () {
+                            this._oAddDialog.close();
+                        }.bind(this)
+                    })
+                });
+            }
+            return this._oAddDialog;
+        },
+
+        _saveNewBook: function () {
             var oModel = this.getModel("bookModel1");
             var aBooks = oModel.getProperty("/books");
-
+        
+            var sName = this.byId("newName").getValue();
+            var sAuthor = this.byId("newAuthor").getValue();
+            var sGenre = this.byId("newGenre").getValue();
+            var sDate = this.byId("newDate").getValue();
+            var sQuantity = parseInt(this.byId("newQuantity").getValue()) || 0;
+        
+            if (!sName || !sAuthor) {
+                sap.m.MessageToast.show("Name and Author are required.");
+                return;
+            }
+        
             aBooks.push({
-                ID:aBooks.length + 1,
-                Name: "",
-                Author: "",
-                Genre: "",
-                ReleaseDate: "",
-                AvailableQuantity: 0
+                ID: aBooks.length + 1,
+                Name: sName,
+                Author: sAuthor,
+                Genre: sGenre,
+                ReleaseDate: sDate,
+                AvailableQuantity: sQuantity
             });
+        
+            oModel.setProperty("/books", aBooks);
+        
+            this._oAddDialog.close();
+        
+            this.byId("newName").setValue("");
+            this.byId("newAuthor").setValue("");
+            this.byId("newGenre").setValue("");
+            this.byId("newDate").setValue("");
+            this.byId("newQuantity").setValue("");
+        },
+        
+        
 
-            oModel.setProperty("/books", aBooks)
+        onAddRecord: function() {
+            this._createAddDialog().open()
         },
 
         onDeleteRecord: function() {
