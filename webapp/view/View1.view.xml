@@ -1,38 +1,70 @@
 <mvc:View controllerName="project1.controller.View1"
     xmlns:mvc="sap.ui.core.mvc"
-    xmlns="sap.m">
+    xmlns="sap.m"
+    xmlns:core="sap.ui.core">
     <Page id="page" title="{i18n>title}">
+        <content>
+            <VBox class="sapUiSmallMergin">
 
-        <Table id="bookTable" items="{bookModel1>/books}">
-
-            <headerToolbar>
-                <Toolbar id="bookTableToolvbar">
-                    <Title id="bookTableTitle" text="Books" />
+                <Toolbar >
+                    <ToolbarSpacer />
+                    <SearchField id="searchField"
+                        width="50%"
+                        placeholder="Search by title..."
+                        search=".onSearch"/>
                 </Toolbar>
-            </headerToolbar>
+                <Table id="bookTable" items="{bookModel1>/books}" mode="MultiSelect">
 
-            <columns>
-                <Column ><Text text="ID"/></Column>
-                <Column ><Text text="Name"/></Column>
-                <Column ><Text text="Author"/></Column>
-                <Column ><Text text="Genre"/></Column>
-                <Column ><Text text="Release Data"/></Column>
-                <Column ><Text text="Available Quantity"/></Column>
-            </columns>
+                    <headerToolbar>
+                        <Toolbar id="bookTableToolbar">
+                            <Title id="bookTableTitle" text="Books" />
 
-            <items>
-                <ColumnListItem>
-                    <cells>
-                        <Text text="{bookModel1>ID}"></Text>
-                        <Text text="{bookModel1>Name}"></Text>
-                        <Text text="{bookModel1>Author}"></Text>
-                        <Text text="{bookModel1>Genre}"></Text>
-                        <Text text="{bookModel1>ReleaseDate}"></Text>
-                        <Text text="{bookModel1>AvailableQuantity}"></Text>
-                    </cells>
-                </ColumnListItem>
-            </items>
-        </Table>
+                            <ToolbarSpacer />
 
+                            <Button text="Add Record" press=".onAddRecord" type="Accept"/>
+                            <Button text="Delete Record" press=".onDeleteRecord" type="Reject"></Button>
+
+                            <ToolbarSeparator />
+
+                            <Select id="genreSelect" change=".onGenreChange" width="150px">
+                                <items>
+                                    <core:Item key="All" text="All Genres" />
+                                    <core:Item key="Epic" text="Epic"/>
+                                    <core:Item key="Novel" text="Novel"/>
+                                    <core:Item key="Historical" text="Historical"/>
+                                    <core:Item key="Drama" text="Drama"/>
+                                    <core:Item key="Biography" text="Biography"/>
+                                </items>
+                            </Select>
+
+                            <Button text="Filter" press=".onApplyFilter" type="Emphasized"/>
+                        </Toolbar>
+                    </headerToolbar>
+
+                    <columns>
+                        <Column ><Text text="ID"/></Column>
+                        <Column ><Text text="Name"/></Column>
+                        <Column ><Text text="Author"/></Column>
+                        <Column ><Text text="Genre"/></Column>
+                        <Column ><Text text="Release Data"/></Column>
+                        <Column ><Text text="Available Quantity"/></Column>
+                    </columns>
+
+                    <items>
+                        <ColumnListItem>
+                            <cells>
+                                <Text text="{bookModel1>ID}"></Text>
+                                <Text text="{bookModel1>Name}"></Text>
+                                <Text text="{bookModel1>Author}"></Text>
+                                <Text text="{bookModel1>Genre}"></Text>
+                                <Text text="{bookModel1>ReleaseDate}"></Text>
+                                <Text text="{bookModel1>AvailableQuantity}"></Text>
+                            </cells>
+                        </ColumnListItem>
+                    </items>
+                </Table>
+
+            </VBox>
+        </content>
     </Page>
 </mvc:View>
