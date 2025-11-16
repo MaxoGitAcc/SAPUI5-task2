@@ -10,8 +10,20 @@ sap.ui.define([
         onInit() {
             var oBookModel = new JSONModel()
             oBookModel.loadData(jQuery.sap.getModulePath("project1.model.books", ".json"));
-            this.getView().setModel(oBookModel, "bookModel1");
 
+            //Edit Mode
+            oBookModel.attachRequestCompleted(function() {
+                var aBooks = oBookModel.getProperty("/books") || [];
+                aBooks.forEach(function(oBook) {
+                    if(oBook.editMode === undefined) {
+                        oBook.editMode = false;
+                    }
+                });
+
+                oBookModel.setProperty("/books", aBooks)
+            })
+
+            this.getView().setModel(oBookModel, "bookModel1");
             this._selectedGenre = "All"
         },
         
@@ -90,7 +102,8 @@ sap.ui.define([
                 Author: sAuthor,
                 Genre: sGenre,
                 ReleaseDate: sDate,
-                AvailableQuantity: sQuantity
+                AvailableQuantity: sQuantity,
+                editMode: false
             });
         
             oModel.setProperty("/books", aBooks);
@@ -125,6 +138,28 @@ sap.ui.define([
 
             oModel.setProperty("/books", aBooks)
         },
+
+        onEditTitle: function(oEvent) {
+            var oContext = oEvent.getSource().getBindingContext("bookModel1");
+            var oModel = this.getModel("bookModel1");
+        
+            oModel.setProperty(oContext.getPath() + "/editMode", true);
+        },
+        
+
+        onSaveTitle: function(oEvent) {
+            var oContext = oEvent.getSource().getBindingContext("bookModel1");
+            var oModel = this.getModel("bookModel1");
+            var sName = oModel.getProperty(oContext.getPath() + "/Name");
+            
+            if (!sName) {
+                sap.m.MessageToast.show("Title cannot be empty.");
+                return;
+            }
+        
+            oModel.setProperty(oContext.getPath() + "/editMode", false);
+        },
+        
 
         //Filter
         onGenreChange: function(oEvent) {

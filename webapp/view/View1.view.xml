@@ -48,17 +48,31 @@
                         <Column ><Text text="Genre"/></Column>
                         <Column ><Text text="Release Data"/></Column>
                         <Column ><Text text="Available Quantity"/></Column>
+                        <Column ><Text text="Actions"></Text></Column>
                     </columns>
 
                     <items>
                         <ColumnListItem>
                             <cells>
                                 <Text text="{bookModel1>ID}"></Text>
-                                <Text text="{bookModel1>Name}"></Text>
+                                <HBox>
+                                    <Text text="{bookModel1>Name}" visible="{= !${bookModel1>editMode} }"/>
+                                    <Input value="{bookModel1>Name}" visible="{bookModel1>editMode}"/>
+                                </HBox>
                                 <Text text="{bookModel1>Author}"></Text>
                                 <Text text="{bookModel1>Genre}"></Text>
                                 <Text text="{bookModel1>ReleaseDate}"></Text>
                                 <Text text="{bookModel1>AvailableQuantity}"></Text>
+                                <HBox >
+                                    <Button text="Edit" 
+                                        visible="{= !${bookModel1>editMode}}"
+                                        press=".onEditTitle" />
+
+                                    <Button text="Save"
+                                        type="Accept" 
+                                        visible="{bookModel1>editMode}"
+                                        press=".onSaveTitle"/>
+                                </HBox>
                             </cells>
                         </ColumnListItem>
                     </items>
