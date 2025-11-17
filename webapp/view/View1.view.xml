@@ -26,15 +26,10 @@
 
                             <ToolbarSeparator />
 
-                            <Select id="genreSelect" change=".onGenreChange" width="150px">
-                                <items>
-                                    <core:Item key="All" text="All Genres" />
-                                    <core:Item key="Epic" text="Epic"/>
-                                    <core:Item key="Novel" text="Novel"/>
-                                    <core:Item key="Historical" text="Historical"/>
-                                    <core:Item key="Drama" text="Drama"/>
-                                    <core:Item key="Biography" text="Biography"/>
-                                </items>
+                            <Select id="genreSelect" change=".onGenreChange" width="150px" items="{
+                                path: 'genreModel>/genres',
+                                templateShareable: true}">
+                                <core:Item key="{genreModel>key}" text="{genreModel>text}" />
                             </Select>
 
                             <Button text="Filter" press=".onApplyFilter" type="Emphasized"/>

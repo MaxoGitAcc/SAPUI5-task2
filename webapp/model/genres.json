@@ -1,0 +1,12 @@
+{
+    "defaultGenre": "All",
+    "genres": [
+      { "key": "All", "text": "All Genres" },
+      { "key": "Epic", "text": "Epic" },
+      { "key": "Novel", "text": "Novel" },
+      { "key": "Historical", "text": "Historical" },
+      { "key": "Drama", "text": "Drama" },
+      { "key": "Biography", "text": "Biography" }
+    ]
+  }
+  

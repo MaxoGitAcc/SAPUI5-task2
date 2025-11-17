@@ -8,23 +8,27 @@ sap.ui.define([
 
     return BaseController.extend("project1.controller.View1", {
         onInit() {
-            var oBookModel = new JSONModel()
+            var oBookModel = new JSONModel();
             oBookModel.loadData(jQuery.sap.getModulePath("project1.model.books", ".json"));
-
+        
             //Edit Mode
             oBookModel.attachRequestCompleted(function() {
                 var aBooks = oBookModel.getProperty("/books") || [];
                 aBooks.forEach(function(oBook) {
-                    if(oBook.editMode === undefined) {
+                    if (oBook.editMode === undefined) {
                         oBook.editMode = false;
                     }
                 });
-
-                oBookModel.setProperty("/books", aBooks)
-            })
-
-            this.getView().setModel(oBookModel, "bookModel1");
-            this._selectedGenre = "All"
+                oBookModel.setProperty("/books", aBooks);
+            });
+        
+            this.setModel(oBookModel, "bookModel1"); 
+        
+            var oGenreModel = new JSONModel();
+            oGenreModel.loadData(jQuery.sap.getModulePath("project1.model.genres", ".json"));
+            this.setModel(oGenreModel, "genreModel")
+        
+            this._selectedGenre = this.getModel("genreModel").getProperty("/defaultGenre");
         },
         
         //Search
@@ -38,8 +42,11 @@ sap.ui.define([
             if (sQuery) {
                 aFilters.push(new Filter("Name", FilterOperator.Contains, sQuery));
             }
+
             //Combained Filter and Search
-            if (this._selectedGenre && this._selectedGenre !== "All") {
+            var sDefaultGenre = this.getModel("genreModel").getProperty("/defaultGenre");
+
+            if (this._selectedGenre && this._selectedGenre !== sDefaultGenre) {
                 aFilters.push(new Filter("Genre", FilterOperator.EQ, this._selectedGenre));
             }
 
@@ -56,10 +63,10 @@ sap.ui.define([
                     content: [
                         new sap.m.VBox({
                             items: [
-                                new sap.m.Input({ placeholder: "Name", id: this.createId("newName") }),
-                                new sap.m.Input({ placeholder: "Author", id: this.createId("newAuthor") }),
+                                new sap.m.Input({ placeholder: "Name", id: this.createId("newName"), required: true}),
+                                new sap.m.Input({ placeholder: "Author", id: this.createId("newAuthor"), required: true}),
                                 new sap.m.Input({ placeholder: "Genre", id: this.createId("newGenre") }),
-                                new sap.m.Input({ placeholder: "Release Date (YYYY-MM-DD)", id: this.createId("newDate") }),
+                                new sap.m.MaskInput({id: this.createId("newDate"), placeholder: "YYYY-MM-DD", mask: "9999-99-99", width: "100%"}),
                                 new sap.m.Input({ placeholder: "Available Quantity", type: "Number", id: this.createId("newQuantity") })
                             ]
                         })
@@ -128,15 +135,17 @@ sap.ui.define([
             var aSelectedItems = oTable.getSelectedItems();
             var oModel = this.getModel("bookModel1");
             var aBooks = oModel.getProperty("/books");
-
-            aSelectedItems.forEach(function(oItem) {
-                var oContext = oItem.getBindingContext("bookModel1");
-                var sPath = oContext.getPath();
-                var iIndex = parseInt(sPath.split("/")[2]);
-                aBooks.splice(iIndex, 1);
+        
+            var aSelectedIds = aSelectedItems.map(function(oItem) {
+                return oItem.getBindingContext("bookModel1").getProperty("ID");
             });
-
-            oModel.setProperty("/books", aBooks)
+        
+            var aRemainingBooks = aBooks.filter(function(oBook) {
+                return !aSelectedIds.includes(oBook.ID);
+            });
+        
+            oModel.setProperty("/books", aRemainingBooks);
+            oTable.removeSelections();
         },
 
         onEditTitle: function(oEvent) {
@@ -175,8 +184,11 @@ sap.ui.define([
             if(sQuery) {
                 aFilters.push(new Filter("Name", FilterOperator.Contains, sQuery))
             }
-            if(this._selectedGenre && this._selectedGenre !== "All") {
-                aFilters.push(new Filter("Genre", FilterOperator.EQ, this._selectedGenre))
+
+            var sDefaultGenre = this.getModel("genreModel").getProperty("/defaultGenre");
+
+            if (this._selectedGenre && this._selectedGenre !== sDefaultGenre) {
+                aFilters.push(new Filter("Genre", FilterOperator.EQ, this._selectedGenre));
             }
 
             oBinding.filter(aFilters);
