@@ -1,35 +1,31 @@
 sap.ui.define([
     "project1/controller/BaseController",
-    "sap/ui/model/json/JSONModel",
     "sap/ui/model/Filter",
     "sap/ui/model/FilterOperator"
-], (BaseController, JSONModel, Filter, FilterOperator) => {
+], (BaseController, Filter, FilterOperator) => {
     "use strict";
 
     return BaseController.extend("project1.controller.View1", {
         onInit() {
-            var oBookModel = new JSONModel();
-            oBookModel.loadData(jQuery.sap.getModulePath("project1.model.books", ".json"));
+            var oBookModel = this.getOwnerComponent().getModel("bookModel1");
+            var oGenreModel = this.getOwnerComponent().getModel("genreModel");
         
-            //Edit Mode
-            oBookModel.attachRequestCompleted(function() {
+            //Edit Mode 
+            oBookModel.dataLoaded().then(() => {
                 var aBooks = oBookModel.getProperty("/books") || [];
-                aBooks.forEach(function(oBook) {
+        
+                aBooks.forEach(oBook => {
                     if (oBook.editMode === undefined) {
                         oBook.editMode = false;
                     }
                 });
+        
                 oBookModel.setProperty("/books", aBooks);
             });
         
-            this.setModel(oBookModel, "bookModel1"); 
-        
-            var oGenreModel = new JSONModel();
-            oGenreModel.loadData(jQuery.sap.getModulePath("project1.model.genres", ".json"));
-            this.setModel(oGenreModel, "genreModel")
-        
-            this._selectedGenre = this.getModel("genreModel").getProperty("/defaultGenre");
-        },
+            this._selectedGenre = oGenreModel.getProperty("/defaultGenre");
+        }
+        ,
         
         //Search
         onSearch: function(oEvent) {

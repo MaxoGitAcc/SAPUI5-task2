@@ -51,7 +51,15 @@
         "settings": {
           "bundleName": "project1.i18n.i18n"
         }
-      }
+      },
+      "bookModel1": {
+        "type": "sap.ui.model.json.JSONModel",
+        "uri": "model/books.json"
+      },
+      "genreModel": {
+        "type": "sap.ui.model.json.JSONModel",
+        "uri": "model/genres.json"
+      }      
     },
     "resources": {
       "css": [
