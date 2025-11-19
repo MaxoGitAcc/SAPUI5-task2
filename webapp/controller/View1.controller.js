@@ -1,19 +1,31 @@
 sap.ui.define([
     "project1/controller/BaseController",
-    "sap/ui/model/json/JSONModel",
     "sap/ui/model/Filter",
     "sap/ui/model/FilterOperator"
-], (BaseController, JSONModel, Filter, FilterOperator) => {
+], (BaseController, Filter, FilterOperator) => {
     "use strict";
 
     return BaseController.extend("project1.controller.View1", {
         onInit() {
-            var oBookModel = new JSONModel()
-            oBookModel.loadData(jQuery.sap.getModulePath("project1.model.books", ".json"));
-            this.getView().setModel(oBookModel, "bookModel1");
-
-            this._selectedGenre = "All"
-        },
+            var oBookModel = this.getOwnerComponent().getModel("bookModel1");
+            var oGenreModel = this.getOwnerComponent().getModel("genreModel");
+        
+            //Edit Mode 
+            oBookModel.dataLoaded().then(() => {
+                var aBooks = oBookModel.getProperty("/books") || [];
+        
+                aBooks.forEach(oBook => {
+                    if (oBook.editMode === undefined) {
+                        oBook.editMode = false;
+                    }
+                });
+        
+                oBookModel.setProperty("/books", aBooks);
+            });
+        
+            this._selectedGenre = oGenreModel.getProperty("/defaultGenre");
+        }
+        ,
         
         //Search
         onSearch: function(oEvent) {
@@ -26,8 +38,11 @@ sap.ui.define([
             if (sQuery) {
                 aFilters.push(new Filter("Name", FilterOperator.Contains, sQuery));
             }
+
             //Combained Filter and Search
-            if (this._selectedGenre && this._selectedGenre !== "All") {
+            var sDefaultGenre = this.getModel("genreModel").getProperty("/defaultGenre");
+
+            if (this._selectedGenre && this._selectedGenre !== sDefaultGenre) {
                 aFilters.push(new Filter("Genre", FilterOperator.EQ, this._selectedGenre));
             }
 
@@ -44,10 +59,10 @@ sap.ui.define([
                     content: [
                         new sap.m.VBox({
                             items: [
-                                new sap.m.Input({ placeholder: "Name", id: this.createId("newName") }),
-                                new sap.m.Input({ placeholder: "Author", id: this.createId("newAuthor") }),
+                                new sap.m.Input({ placeholder: "Name", id: this.createId("newName"), required: true}),
+                                new sap.m.Input({ placeholder: "Author", id: this.createId("newAuthor"), required: true}),
                                 new sap.m.Input({ placeholder: "Genre", id: this.createId("newGenre") }),
-                                new sap.m.Input({ placeholder: "Release Date (YYYY-MM-DD)", id: this.createId("newDate") }),
+                                new sap.m.MaskInput({id: this.createId("newDate"), placeholder: "YYYY-MM-DD", mask: "9999-99-99", width: "100%"}),
                                 new sap.m.Input({ placeholder: "Available Quantity", type: "Number", id: this.createId("newQuantity") })
                             ]
                         })
@@ -90,7 +105,8 @@ sap.ui.define([
                 Author: sAuthor,
                 Genre: sGenre,
                 ReleaseDate: sDate,
-                AvailableQuantity: sQuantity
+                AvailableQuantity: sQuantity,
+                editMode: false
             });
         
             oModel.setProperty("/books", aBooks);
@@ -115,16 +131,40 @@ sap.ui.define([
             var aSelectedItems = oTable.getSelectedItems();
             var oModel = this.getModel("bookModel1");
             var aBooks = oModel.getProperty("/books");
-
-            aSelectedItems.forEach(function(oItem) {
-                var oContext = oItem.getBindingContext("bookModel1");
-                var sPath = oContext.getPath();
-                var iIndex = parseInt(sPath.split("/")[2]);
-                aBooks.splice(iIndex, 1);
+        
+            var aSelectedIds = aSelectedItems.map(function(oItem) {
+                return oItem.getBindingContext("bookModel1").getProperty("ID");
             });
-
-            oModel.setProperty("/books", aBooks)
+        
+            var aRemainingBooks = aBooks.filter(function(oBook) {
+                return !aSelectedIds.includes(oBook.ID);
+            });
+        
+            oModel.setProperty("/books", aRemainingBooks);
+            oTable.removeSelections();
         },
+
+        onEditTitle: function(oEvent) {
+            var oContext = oEvent.getSource().getBindingContext("bookModel1");
+            var oModel = this.getModel("bookModel1");
+        
+            oModel.setProperty(oContext.getPath() + "/editMode", true);
+        },
+        
+
+        onSaveTitle: function(oEvent) {
+            var oContext = oEvent.getSource().getBindingContext("bookModel1");
+            var oModel = this.getModel("bookModel1");
+            var sName = oModel.getProperty(oContext.getPath() + "/Name");
+            
+            if (!sName) {
+                sap.m.MessageToast.show("Title cannot be empty.");
+                return;
+            }
+        
+            oModel.setProperty(oContext.getPath() + "/editMode", false);
+        },
+        
 
         //Filter
         onGenreChange: function(oEvent) {
@@ -140,8 +180,11 @@ sap.ui.define([
             if(sQuery) {
                 aFilters.push(new Filter("Name", FilterOperator.Contains, sQuery))
             }
-            if(this._selectedGenre && this._selectedGenre !== "All") {
-                aFilters.push(new Filter("Genre", FilterOperator.EQ, this._selectedGenre))
+
+            var sDefaultGenre = this.getModel("genreModel").getProperty("/defaultGenre");
+
+            if (this._selectedGenre && this._selectedGenre !== sDefaultGenre) {
+                aFilters.push(new Filter("Genre", FilterOperator.EQ, this._selectedGenre));
             }
 
             oBinding.filter(aFilters);
