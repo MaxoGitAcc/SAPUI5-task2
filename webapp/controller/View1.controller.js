@@ -1,8 +1,11 @@
 sap.ui.define([
     "project1/controller/BaseController",
     "sap/ui/model/Filter",
-    "sap/ui/model/FilterOperator"
-], (BaseController, Filter, FilterOperator) => {
+    "sap/m/Dialog",
+    "sap/m/DialogType",
+    "sap/m/Text",
+    "sap/m/Button",
+], (BaseController, Filter, Dialog, DialogType, Text, Button) => {
     "use strict";
 
     return BaseController.extend("project1.controller.View1", {
@@ -127,21 +130,43 @@ sap.ui.define([
         },
 
         onDeleteRecord: function() {
-            var oTable = this.byId("bookTable");
-            var aSelectedItems = oTable.getSelectedItems();
-            var oModel = this.getModel("bookModel1");
-            var aBooks = oModel.getProperty("/books");
-        
-            var aSelectedIds = aSelectedItems.map(function(oItem) {
-                return oItem.getBindingContext("bookModel1").getProperty("ID");
-            });
-        
-            var aRemainingBooks = aBooks.filter(function(oBook) {
-                return !aSelectedIds.includes(oBook.ID);
-            });
-        
-            oModel.setProperty("/books", aRemainingBooks);
-            oTable.removeSelections();
+            if(!this.oDeleteDialog){
+                this.oDeleteDialog = new Dialog({
+                    type: DialogType.Message,
+                    title: "Confirm",
+                    content: new Text({text: "Are you sure you want to delete selected records?"}),
+                    beginButton: new Button({
+                        text: "Yes",
+                        press: function() {
+                            var oTable = this.byId("bookTable");
+                            var aSelectedItems = oTable.getSelectedItems();
+                            var oModel = this.getModel("bookModel1");
+                            var aBooks = oModel.getProperty("/books");
+                        
+                            var aSelectedIds = aSelectedItems.map(function(oItem) {
+                                return oItem.getBindingContext("bookModel1").getProperty("ID");
+                            });
+                        
+                            var aRemainingBooks = aBooks.filter(function(oBook) {
+                                return !aSelectedIds.includes(oBook.ID);
+                            });
+                        
+                            oModel.setProperty("/books", aRemainingBooks);
+                            oTable.removeSelections()
+
+                            this.oDeleteDialog.close();
+                        }.bind(this)
+                    }),
+                    endButton: new Button({
+                        text: "No",
+                        press: function() {
+                            this.oDeleteDialog.close();
+                        }.bind(this)
+                    })
+                });
+            }
+
+            this.oDeleteDialog.open();
         },
 
         onEditTitle: function(oEvent) {
