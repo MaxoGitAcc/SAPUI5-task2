@@ -1,0 +1,31 @@
+<core:FragmentDefinition
+    xmlns="sap.m"
+    xmlns:core="sap.ui.core">
+
+    <Dialog id="addBookDialog"
+        title="Add New Book"
+        contentWidth="400px">
+
+        <VBox renderType="Bare">
+            <Input id="newName" placeholder="Name" required="true" />
+            <Input id="newAuthor" placeholder="Author" required="true" />
+            <ComboBox id="newGenre" items="{
+                path: 'genreModel>/genres'}" placeholder="genre" required="true">
+                <core:Item key="{genreModel>key}" text="{genreModel>text}" />
+            </ComboBox>
+            <DatePicker id="newDate" placeholder="YYYY-MM-DD" displayFormat="yyyy-MM-dd"
+                 valueFormat="yyyy-MM-dd" required="true"/>
+            <Input id="newQuantity" placeholder="Avaible Quantity" type="Number" required="true"/>
+        </VBox> 
+
+        <beginButton>
+            <Button text="Add" press=".handleAddButton"/>
+        </beginButton>
+
+        <endButton>
+            <Button text="Cancle" press=".handleCancleButton"/>
+        </endButton>
+
+    </Dialog>
+
+</core:FragmentDefinition>

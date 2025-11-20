@@ -5,7 +5,8 @@ sap.ui.define([
     "sap/m/DialogType",
     "sap/m/Text",
     "sap/m/Button",
-], (BaseController, Filter, Dialog, DialogType, Text, Button) => {
+    "sap/ui/core/Fragment",
+], (BaseController, Filter, Dialog, DialogType, Text, Button, Fragment) => {
     "use strict";
 
     return BaseController.extend("project1.controller.View1", {
@@ -55,45 +56,25 @@ sap.ui.define([
         //Buttons
         _createAddDialog: function () {
             if (!this._oAddDialog) {
-                this._oAddDialog = new sap.m.Dialog({
-                    title: "Add New Book",
-                    contentWidth: "400px",
-                    type: "Message",
-                    content: [
-                        new sap.m.VBox({
-                            items: [
-                                new sap.m.Input({ placeholder: "Name", id: this.createId("newName"), required: true}),
-                                new sap.m.Input({ placeholder: "Author", id: this.createId("newAuthor"), required: true}),
-                                new sap.m.Input({ placeholder: "Genre", id: this.createId("newGenre") }),
-                                new sap.m.MaskInput({id: this.createId("newDate"), placeholder: "YYYY-MM-DD", mask: "9999-99-99", width: "100%"}),
-                                new sap.m.Input({ placeholder: "Available Quantity", type: "Number", id: this.createId("newQuantity") })
-                            ]
-                        })
-                    ],
-                    beginButton: new sap.m.Button({
-                        text: "Add",
-                        press: function () {
-                            this._saveNewBook();
-                        }.bind(this)
-                    }),
-                    endButton: new sap.m.Button({
-                        text: "Cancel",
-                        press: function () {
-                            this._oAddDialog.close();
-                        }.bind(this)
-                    })
-                });
+                this._oAddDialog = Fragment.load({
+                    id: this.getView().getId(),
+                    name: "project1.view.addBookDialog",
+                    controller: this
+                }).then(function (oDialog) {
+                    this.getView().addDependent(oDialog);
+                    return oDialog;
+                }.bind(this))
             }
+
             return this._oAddDialog;
         },
 
-        _saveNewBook: function () {
+        handleAddButton: function () {
             var oModel = this.getModel("bookModel1");
             var aBooks = oModel.getProperty("/books");
-        
             var sName = this.byId("newName").getValue();
             var sAuthor = this.byId("newAuthor").getValue();
-            var sGenre = this.byId("newGenre").getValue();
+            var sGenre = this.byId("newGenre").getSelectedKey();
             var sDate = this.byId("newDate").getValue();
             var sQuantity = parseInt(this.byId("newQuantity").getValue()) || 0;
         
@@ -113,8 +94,10 @@ sap.ui.define([
             });
         
             oModel.setProperty("/books", aBooks);
-        
-            this._oAddDialog.close();
+            
+            this._oAddDialog.then(function(oDialog){
+                oDialog.close();
+            });            
         
             this.byId("newName").setValue("");
             this.byId("newAuthor").setValue("");
@@ -123,10 +106,15 @@ sap.ui.define([
             this.byId("newQuantity").setValue("");
         },
         
+        handleCancleButton: function() {
+            var oDialog = this.byId("addBookDialog")
+            oDialog.close()
+        },
         
-
         onAddRecord: function() {
-            this._createAddDialog().open()
+            this._createAddDialog().then(function (oDialog) {
+                oDialog.open()
+            })
         },
 
         onDeleteRecord: function() {
