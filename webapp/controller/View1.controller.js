@@ -1,8 +1,14 @@
 sap.ui.define([
     "project1/controller/BaseController",
     "sap/ui/model/Filter",
-    "sap/ui/model/FilterOperator"
-], (BaseController, Filter, FilterOperator) => {
+    "sap/ui/model/FilterOperator",
+    "sap/m/Dialog",
+    "sap/m/DialogType",
+    "sap/m/Text",
+    "sap/m/Button",
+    "sap/ui/core/Fragment",
+    "sap/m/MessageToast"
+], (BaseController, Filter, FilterOperator, Dialog, DialogType, Text, Button, Fragment, MessageToast) => {
     "use strict";
 
     return BaseController.extend("project1.controller.View1", {
@@ -24,8 +30,7 @@ sap.ui.define([
             });
         
             this._selectedGenre = oGenreModel.getProperty("/defaultGenre");
-        }
-        ,
+        },
         
         //Search
         onSearch: function(oEvent) {
@@ -50,57 +55,103 @@ sap.ui.define([
         },
 
         //Buttons
-        _createAddDialog: function () {
+        _createAddDialog: async function () {
             if (!this._oAddDialog) {
-                this._oAddDialog = new sap.m.Dialog({
-                    title: "Add New Book",
-                    contentWidth: "400px",
-                    type: "Message",
-                    content: [
-                        new sap.m.VBox({
-                            items: [
-                                new sap.m.Input({ placeholder: "Name", id: this.createId("newName"), required: true}),
-                                new sap.m.Input({ placeholder: "Author", id: this.createId("newAuthor"), required: true}),
-                                new sap.m.Input({ placeholder: "Genre", id: this.createId("newGenre") }),
-                                new sap.m.MaskInput({id: this.createId("newDate"), placeholder: "YYYY-MM-DD", mask: "9999-99-99", width: "100%"}),
-                                new sap.m.Input({ placeholder: "Available Quantity", type: "Number", id: this.createId("newQuantity") })
-                            ]
-                        })
-                    ],
-                    beginButton: new sap.m.Button({
-                        text: "Add",
-                        press: function () {
-                            this._saveNewBook();
-                        }.bind(this)
-                    }),
-                    endButton: new sap.m.Button({
-                        text: "Cancel",
-                        press: function () {
-                            this._oAddDialog.close();
-                        }.bind(this)
-                    })
+                this._oAddDialog = await this.loadFragment({
+                    name: "project1.view.addBookDialog",
                 });
+                
+                this.getView().addDependent(this._oAddDialog);
+
+                var oComboBox = this.byId("newGenre");
+                var oBinding = oComboBox.getBinding("items");
+                if (oBinding) {
+                    oBinding.filter(new Filter("key", FilterOperator.NE, "All"));
+                }
             }
+
             return this._oAddDialog;
         },
 
-        _saveNewBook: function () {
-            var oModel = this.getModel("bookModel1");
-            var aBooks = oModel.getProperty("/books");
+        _validateRequiredFields: function () {
+            let bValid = true;
         
-            var sName = this.byId("newName").getValue();
-            var sAuthor = this.byId("newAuthor").getValue();
-            var sGenre = this.byId("newGenre").getValue();
-            var sDate = this.byId("newDate").getValue();
-            var sQuantity = parseInt(this.byId("newQuantity").getValue()) || 0;
-        
-            if (!sName || !sAuthor) {
-                sap.m.MessageToast.show("Name and Author are required.");
-                return;
+            const oName = this.byId("newName");
+
+            if (!oName.getValue().trim()) {
+                oName.setValueState("Error");
+                oName.setValueStateText("Name is required");
+                bValid = false;
+            } else {
+                oName.setValueState("None");
             }
         
+        
+            const oAuthor = this.byId("newAuthor");
+
+            if (!oAuthor.getValue().trim()) {
+                oAuthor.setValueState("Error");
+                oAuthor.setValueStateText("Author is required");
+                bValid = false;
+            } else {
+                oAuthor.setValueState("None");
+            }
+        
+            
+            const oGenre = this.byId("newGenre");
+
+            if (!oGenre.getSelectedKey()) {
+                oGenre.setValueState("Error");
+                oGenre.setValueStateText("Select a genre");
+                bValid = false;
+            } else {
+                oGenre.setValueState("None");
+            }
+        
+            
+            const oDate = this.byId("newDate");
+
+            if (!oDate.getDateValue()) {
+                oDate.setValueState("Error");
+                oDate.setValueStateText("Enter a valid date");
+                bValid = false;
+            } else {
+                oDate.setValueState("None");
+            }
+        
+            
+            const oQty = this.byId("newQuantity");
+
+            const iQty = parseInt(oQty.getValue(), 10);
+            if (isNaN(iQty) || iQty < 0) {
+                oQty.setValueState("Error");
+                oQty.setValueStateText("Enter a valid positive number");
+                bValid = false;
+            } else {
+                oQty.setValueState("None");
+            }
+        
+            return bValid;
+        },
+        
+        handleAddButton: async function () {
+            if (!this._validateRequiredFields()) {
+                return;
+            }
+
+            var oModel = this.getModel("bookModel1");
+            var aBooks = oModel.getProperty("/books");
+            var sName = this.byId("newName").getValue();
+            var sAuthor = this.byId("newAuthor").getValue();
+            var sGenre = this.byId("newGenre").getSelectedKey();
+            var sDate = this.byId("newDate").getValue();
+            var sQuantity = parseInt(this.byId("newQuantity").getValue()) || 0;
+
+            const aExistingIDs = aBooks.map(b => b.ID);
+            const newID = aExistingIDs.length ? Math.max(...aExistingIDs) + 1 : 1;
+        
             aBooks.push({
-                ID: aBooks.length + 1,
+                ID: newID,
                 Name: sName,
                 Author: sAuthor,
                 Genre: sGenre,
@@ -110,8 +161,11 @@ sap.ui.define([
             });
         
             oModel.setProperty("/books", aBooks);
-        
-            this._oAddDialog.close();
+            
+            const oDialog = await this._createAddDialog();
+            oDialog.close()
+            
+            MessageToast.show("Book Added");
         
             this.byId("newName").setValue("");
             this.byId("newAuthor").setValue("");
@@ -120,28 +174,61 @@ sap.ui.define([
             this.byId("newQuantity").setValue("");
         },
         
-        
+        handleCancelButton: async function() {
+            const oDialog = await this._createAddDialog();
+            oDialog.close()
 
+            this.byId("newName").setValue("");
+            this.byId("newAuthor").setValue("");
+            this.byId("newGenre").setValue("");
+            this.byId("newDate").setValue("");
+            this.byId("newQuantity").setValue("");
+        },
+        
         onAddRecord: function() {
-            this._createAddDialog().open()
+            this._createAddDialog().then(function (oDialog) {
+                oDialog.open()
+            })
         },
 
         onDeleteRecord: function() {
-            var oTable = this.byId("bookTable");
-            var aSelectedItems = oTable.getSelectedItems();
-            var oModel = this.getModel("bookModel1");
-            var aBooks = oModel.getProperty("/books");
-        
-            var aSelectedIds = aSelectedItems.map(function(oItem) {
-                return oItem.getBindingContext("bookModel1").getProperty("ID");
-            });
-        
-            var aRemainingBooks = aBooks.filter(function(oBook) {
-                return !aSelectedIds.includes(oBook.ID);
-            });
-        
-            oModel.setProperty("/books", aRemainingBooks);
-            oTable.removeSelections();
+            if(!this.oDeleteDialog){
+                this.oDeleteDialog = new Dialog({
+                    type: DialogType.Message,
+                    title: "Confirm",
+                    content: new Text({text: "Are you sure you want to delete selected records?"}),
+                    beginButton: new Button({
+                        text: "Yes",
+                        press: function() {
+                            var oTable = this.byId("bookTable");
+                            var aSelectedItems = oTable.getSelectedItems();
+                            var oModel = this.getModel("bookModel1");
+                            var aBooks = oModel.getProperty("/books");
+                        
+                            var aSelectedIds = aSelectedItems.map(function(oItem) {
+                                return oItem.getBindingContext("bookModel1").getProperty("ID");
+                            });
+                        
+                            var aRemainingBooks = aBooks.filter(function(oBook) {
+                                return !aSelectedIds.includes(oBook.ID);
+                            });
+                        
+                            oModel.setProperty("/books", aRemainingBooks);
+                            oTable.removeSelections()
+
+                            this.oDeleteDialog.close();
+                        }.bind(this)
+                    }),
+                    endButton: new Button({
+                        text: "No",
+                        press: function() {
+                            this.oDeleteDialog.close();
+                        }.bind(this)
+                    })
+                });
+            }
+
+            this.oDeleteDialog.open();
         },
 
         onEditTitle: function(oEvent) {
@@ -158,7 +245,7 @@ sap.ui.define([
             var sName = oModel.getProperty(oContext.getPath() + "/Name");
             
             if (!sName) {
-                sap.m.MessageToast.show("Title cannot be empty.");
+                MessageToast.show("Title cannot be empty.");
                 return;
             }
         
