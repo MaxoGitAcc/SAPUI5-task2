@@ -6,16 +6,16 @@
         title="Add New Book"
         contentWidth="400px">
 
-        <VBox renderType="Bare">
-            <Input id="newName" placeholder="Name" required="true" />
+        <VBox renderType="Bare" class="paddingDialog">
+            <Input id="newName" placeholder="Name"  required="true" />
             <Input id="newAuthor" placeholder="Author" required="true" />
             <ComboBox id="newGenre" items="{
-                path: 'genreModel>/genres'}" placeholder="genre" required="true">
+                path: 'genreModel>/genres'}" placeholder="Genre" required="true">
                 <core:Item key="{genreModel>key}" text="{genreModel>text}" />
             </ComboBox>
             <DatePicker id="newDate" placeholder="YYYY-MM-DD" displayFormat="yyyy-MM-dd"
                  valueFormat="yyyy-MM-dd" required="true"/>
-            <Input id="newQuantity" placeholder="Avaible Quantity" type="Number" required="true"/>
+            <Input id="newQuantity" placeholder="Available Quantity" type="Number" required="true"/>
         </VBox> 
 
         <beginButton>
@@ -23,7 +23,7 @@
         </beginButton>
 
         <endButton>
-            <Button text="Cancle" press=".handleCancleButton"/>
+            <Button text="Cancel" press=".handleCancelButton"/>
         </endButton>
 
     </Dialog>
