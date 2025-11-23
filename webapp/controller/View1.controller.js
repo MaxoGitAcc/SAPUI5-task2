@@ -1,5 +1,6 @@
 sap.ui.define([
     "project1/controller/BaseController",
+    "project1/util/Validation",
     "sap/ui/model/Filter",
     "sap/ui/model/FilterOperator",
     "sap/m/Dialog",
@@ -8,7 +9,7 @@ sap.ui.define([
     "sap/m/Button",
     "sap/ui/core/Fragment",
     "sap/m/MessageToast"
-], (BaseController, Filter, FilterOperator, Dialog, DialogType, Text, Button, Fragment, MessageToast) => {
+], (BaseController, Validation, Filter, FilterOperator, Dialog, DialogType, Text, Button, Fragment, MessageToast) => {
     "use strict";
 
     return BaseController.extend("project1.controller.View1", {
@@ -66,7 +67,7 @@ sap.ui.define([
                 var oComboBox = this.byId("newGenre");
                 var oBinding = oComboBox.getBinding("items");
                 if (oBinding) {
-                    oBinding.filter(new Filter("key", FilterOperator.NE, "All"));
+                    oBinding.filter(new Filter("newBook", FilterOperator.NE, "No"));
                 }
             }
 
@@ -75,62 +76,13 @@ sap.ui.define([
 
         _validateRequiredFields: function () {
             let bValid = true;
-        
-            const oName = this.byId("newName");
 
-            if (!oName.getValue().trim()) {
-                oName.setValueState("Error");
-                oName.setValueStateText("Name is required");
-                bValid = false;
-            } else {
-                oName.setValueState("None");
-            }
-        
-        
-            const oAuthor = this.byId("newAuthor");
+            bValid = Validation.isNotEmpty(this.byId("newName"), "Name is required");
+            bValid = Validation.isNotEmpty(this.byId("newAuthor"), "Author is required");
+            bValid = Validation.isDropdownSelected(this.byId("newGenre"), "Select a genre");
+            bValid = Validation.isValidDate(this.byId("newDate"), "Enter a valid date");
+            bValid = Validation.isPositiveNumber(this.byId("newQuantity"), "Enter a valid positive number");
 
-            if (!oAuthor.getValue().trim()) {
-                oAuthor.setValueState("Error");
-                oAuthor.setValueStateText("Author is required");
-                bValid = false;
-            } else {
-                oAuthor.setValueState("None");
-            }
-        
-            
-            const oGenre = this.byId("newGenre");
-
-            if (!oGenre.getSelectedKey()) {
-                oGenre.setValueState("Error");
-                oGenre.setValueStateText("Select a genre");
-                bValid = false;
-            } else {
-                oGenre.setValueState("None");
-            }
-        
-            
-            const oDate = this.byId("newDate");
-
-            if (!oDate.getDateValue()) {
-                oDate.setValueState("Error");
-                oDate.setValueStateText("Enter a valid date");
-                bValid = false;
-            } else {
-                oDate.setValueState("None");
-            }
-        
-            
-            const oQty = this.byId("newQuantity");
-
-            const iQty = parseInt(oQty.getValue(), 10);
-            if (isNaN(iQty) || iQty < 0) {
-                oQty.setValueState("Error");
-                oQty.setValueStateText("Enter a valid positive number");
-                bValid = false;
-            } else {
-                oQty.setValueState("None");
-            }
-        
             return bValid;
         },
         
@@ -176,13 +128,17 @@ sap.ui.define([
         
         handleCancelButton: async function() {
             const oDialog = await this._createAddDialog();
-            oDialog.close()
-
-            this.byId("newName").setValue("");
-            this.byId("newAuthor").setValue("");
-            this.byId("newGenre").setValue("");
-            this.byId("newDate").setValue("");
-            this.byId("newQuantity").setValue("");
+            oDialog.close();
+        
+            const aInputs = ["newName", "newAuthor", "newGenre", "newDate", "newQuantity"];
+        
+            aInputs.forEach(id => {
+                const oInput = this.byId(id);
+                if (oInput) {
+                    oInput.setValue("");             
+                    oInput.setValueState("None"); 
+                }
+            });
         },
         
         onAddRecord: function() {

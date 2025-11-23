@@ -6,7 +6,7 @@
         title="Add New Book"
         contentWidth="400px">
 
-        <VBox renderType="Bare" class="paddingDialog">
+        <VBox renderType="Bare" class="sapUi-Std-PaddingS">
             <Input id="newName" placeholder="Name"  required="true" />
             <Input id="newAuthor" placeholder="Author" required="true" />
             <ComboBox id="newGenre" items="{
