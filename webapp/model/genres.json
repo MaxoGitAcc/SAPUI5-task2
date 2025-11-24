@@ -1,12 +1,12 @@
 {
     "defaultGenre": "All",
     "genres": [
-      { "key": "All", "text": "All Genres" },
-      { "key": "Epic", "text": "Epic" },
-      { "key": "Novel", "text": "Novel" },
-      { "key": "Historical", "text": "Historical" },
-      { "key": "Drama", "text": "Drama" },
-      { "key": "Biography", "text": "Biography" }
+      { "key": "All", "text": "All Genres", "isOnlyFilterOption": true },
+      { "key": "Epic", "text": "Epic", "isOnlyFilterOption": false },
+      { "key": "Novel", "text": "Novel", "isOnlyFilterOption": false },
+      { "key": "Historical", "text": "Historical", "isOnlyFilterOption": false },
+      { "key": "Drama", "text": "Drama", "isOnlyFilterOption": false },
+      { "key": "Biography", "text": "Biography", "isOnlyFilterOption": false }
     ]
   }
   
