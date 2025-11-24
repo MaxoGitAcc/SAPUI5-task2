@@ -22,37 +22,15 @@ sap.ui.define([
                 var aBooks = oBookModel.getProperty("/books") || [];
         
                 aBooks.forEach(oBook => {
-                    if (oBook.editMode === undefined) {
+                    if (!oBook.hasOwnProperty("editMode")) {
                         oBook.editMode = false;
-                    }
+                    }                    
                 });
         
                 oBookModel.setProperty("/books", aBooks);
             });
         
             this._selectedGenre = oGenreModel.getProperty("/defaultGenre");
-        },
-        
-        //Search
-        onSearch: function(oEvent) {
-            var sQuery = oEvent.getParameter("query");
-            var oTable = this.byId("bookTable");
-            var oBinding = oTable.getBinding("items");
-
-            var aFilters = [];
-
-            if (sQuery) {
-                aFilters.push(new Filter("Name", FilterOperator.Contains, sQuery));
-            }
-
-            //Combained Filter and Search
-            var sDefaultGenre = this.getModel("genreModel").getProperty("/defaultGenre");
-
-            if (this._selectedGenre && this._selectedGenre !== sDefaultGenre) {
-                aFilters.push(new Filter("Genre", FilterOperator.EQ, this._selectedGenre));
-            }
-
-            oBinding.filter(aFilters);
         },
 
         //Buttons
@@ -232,6 +210,10 @@ sap.ui.define([
             oModel.setProperty(oContext.getPath() + "/editMode", false);
         },
         
+        //Search
+        onSearch: function(oEvent) {
+            this._applyTableFilters(oEvent.getParameter("query"));
+        },
 
         //Filter
         onGenreChange: function(oEvent) {
@@ -239,22 +221,26 @@ sap.ui.define([
         },
 
         onApplyFilter: function() {
+            this._applyTableFilters(this.byId("searchField").getValue());
+        },
+
+
+        _applyTableFilters: function(sQuery) {
             var oTable = this.byId("bookTable");
             var oBinding = oTable.getBinding("items");
-
             var aFilters = [];
-            var sQuery = this.byId("searchField").getValue();
-            if(sQuery) {
-                aFilters.push(new Filter("Name", FilterOperator.Contains, sQuery))
-            }
-
             var sDefaultGenre = this.getModel("genreModel").getProperty("/defaultGenre");
-
+        
+            if (sQuery) {
+                aFilters.push(new Filter("Name", FilterOperator.Contains, sQuery));
+            }
+        
             if (this._selectedGenre && this._selectedGenre !== sDefaultGenre) {
                 aFilters.push(new Filter("Genre", FilterOperator.EQ, this._selectedGenre));
             }
-
+        
             oBinding.filter(aFilters);
         }
+        
     });
 });
