@@ -79,11 +79,14 @@ sap.ui.define([
         _validateRequiredFields: function () {
             let bValid = true;
 
-            bValid = Validation.isNotEmpty(this.byId("newName"), "Name is required");
-            bValid = Validation.isNotEmpty(this.byId("newAuthor"), "Author is required");
-            bValid = Validation.isDropdownSelected(this.byId("newGenre"), "Select a genre");
-            bValid = Validation.isValidDate(this.byId("newDate"), "Enter a valid date");
-            bValid = Validation.isPositiveNumber(this.byId("newQuantity"), "Enter a valid positive number");
+            Object.keys(this._validators).forEach(sId => {
+                const oControl = this.byId(sId);
+                const validator = this._validators[sId];
+        
+                if (validator && !validator.fn(oControl, validator.msg)) {
+                    bValid = false;
+                }
+            });
 
             return bValid;
         },
@@ -140,25 +143,24 @@ sap.ui.define([
             oDialog.close()
             
             MessageToast.show("Book Added");
-        
-            this.byId("newName").setValue("");
-            this.byId("newAuthor").setValue("");
-            this.byId("newGenre").setValue("");
-            this.byId("newDate").setValue("");
-            this.byId("newQuantity").setValue("");
+            
+            this._resetDialogFields();
         },
         
         handleCancelButton: async function() {
             const oDialog = await this._createAddDialog();
             oDialog.close();
         
-            const aInputs = ["newName", "newAuthor", "newGenre", "newDate", "newQuantity"];
-        
+            this._resetDialogFields();
+        },
+
+        _resetDialogFields: function() {
+            const aInputs = Object.keys(this._validators);
             aInputs.forEach(id => {
-                const oInput = this.byId(id);
-                if (oInput) {
-                    oInput.setValue("");             
-                    oInput.setValueState("None"); 
+                const oControl = this.byId(id);
+                if (oControl) {
+                    oControl.setValue("");
+                    oControl.setValueState("None");
                 }
             });
         },
