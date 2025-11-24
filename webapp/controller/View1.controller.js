@@ -67,7 +67,7 @@ sap.ui.define([
                 var oComboBox = this.byId("newGenre");
                 var oBinding = oComboBox.getBinding("items");
                 if (oBinding) {
-                    oBinding.filter(new Filter("newBook", FilterOperator.NE, "No"));
+                    oBinding.filter(new Filter("isSelectable", FilterOperator.NE, "false"));
                 }
             }
 
