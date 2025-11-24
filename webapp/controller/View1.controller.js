@@ -22,7 +22,7 @@ sap.ui.define([
                 var aBooks = oBookModel.getProperty("/books") || [];
         
                 aBooks.forEach(oBook => {
-                    if (!oBook.hasOwnProperty("editMode")) {
+                    if (!oBook.editMode) {
                         oBook.editMode = false;
                     }                    
                 });
