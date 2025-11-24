@@ -67,8 +67,10 @@ sap.ui.define([
                 var oComboBox = this.byId("newGenre");
                 var oBinding = oComboBox.getBinding("items");
                 if (oBinding) {
-                    oBinding.filter(new Filter("isSelectable", FilterOperator.NE, "false"));
+                    oBinding.filter(new Filter("isOnlyFilterOption", FilterOperator.NE, true));
                 }
+
+                this._setupLiveValidation();
             }
 
             return this._oAddDialog;
@@ -84,6 +86,26 @@ sap.ui.define([
             bValid = Validation.isPositiveNumber(this.byId("newQuantity"), "Enter a valid positive number");
 
             return bValid;
+        },
+
+        _setupLiveValidation: function() {
+            this._validators = {
+                "newName": { fn: Validation.isNotEmpty, msg: "Name is required" },
+                "newAuthor": { fn: Validation.isNotEmpty, msg: "Author is required" },
+                "newGenre": { fn: Validation.isDropdownSelected, msg: "Select a genre" },
+                "newDate": { fn: Validation.isValidDate, msg: "Enter a valid date" },
+                "newQuantity": { fn: Validation.isPositiveNumber, msg: "Enter a valid positive number" }
+            };
+        },
+
+        onLiveValidate: function(oEvent) {
+            const oControl = oEvent.getSource();
+            const sId = oControl.getId().split("--").pop();
+            const validator = this._validators[sId];
+        
+            if (validator) {
+                validator.fn(oControl, validator.msg);
+            }
         },
         
         handleAddButton: async function () {
