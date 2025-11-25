@@ -1,9 +1,12 @@
-sap.ui.define([], function () {
+sap.ui.define([
+    "sap/ui/core/date/UI5Date"
+], function (UI5Date) {
     "use strict";
+
     return {
-        formatYear: function (sDate) {
-            var oDate = new Date(sDate);
-            return "Published: " + oDate.getFullYear();
+        formatYear: function (sPublishedText, sDate) {
+            var oDate = UI5Date.getInstance(sDate);
+            return sPublishedText + ": " + oDate.getFullYear();
         }
     };
 });

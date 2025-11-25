@@ -56,7 +56,11 @@
                                 </HBox>
                                 <Text text="{bookModel1>Author}"></Text>
                                 <Text text="{bookModel1>Genre}"></Text>
-                                <Text text="{path: 'bookModel1>ReleaseDate', formatter: '.formatter.formatYear'}"/>
+                                <Text text="{
+                                    parts: [
+                                        { path: 'i18n>publishedString' },
+                                        { path: 'bookModel1>ReleaseDate' }
+                                    ], formatter: '.formatter.formatYear'}"/>
                                 <Text text="{bookModel1>AvailableQuantity}"></Text>
                                 <HBox >
                                     <Button text="Edit" 
