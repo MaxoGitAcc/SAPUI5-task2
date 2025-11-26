@@ -7,23 +7,23 @@
         contentWidth="400px">
 
         <VBox renderType="Bare" class="sapUi-Std-PaddingS">
-            <Input id="newName" placeholder="Name"  required="true" liveChange=".onLiveValidate" />
-            <Input id="newAuthor" placeholder="Author" required="true" liveChange=".onLiveValidate" />
+            <Input id="newName" placeholder="{i18n>namePlaceHolder}"  required="true" liveChange=".onLiveValidate" />
+            <Input id="newAuthor" placeholder="{i18n>authorPlaceHolder}" required="true" liveChange=".onLiveValidate" />
             <ComboBox id="newGenre" items="{
-                path: 'genreModel>/genres'}" placeholder="Genre" required="true" change=".onLiveValidate" >
+                path: 'genreModel>/genres'}" placeholder="{i18n>genrePlaceHolder}" required="true" change=".onLiveValidate" >
                 <core:Item key="{genreModel>key}" text="{genreModel>text}"  />
             </ComboBox>
-            <DatePicker id="newDate" placeholder="YYYY-MM-DD" displayFormat="yyyy-MM-dd"
+            <DatePicker id="newDate" placeholder="{i18n>datePlaceHolder}" displayFormat="yyyy-MM-dd"
                  valueFormat="yyyy-MM-dd" required="true" change=".onLiveValidate"/>
-            <Input id="newQuantity" placeholder="Available Quantity" type="Number" required="true" liveChange=".onLiveValidate"/>
+            <Input id="newQuantity" placeholder="{i18n>quantityPlaceHolder}" type="Number" required="true" liveChange=".onLiveValidate"/>
         </VBox> 
 
         <beginButton>
-            <Button text="Add" press=".handleAddButton"/>
+            <Button text="{i18n>addDialogButton}" press=".handleAddButton"/>
         </beginButton>
 
         <endButton>
-            <Button text="Cancel" press=".handleCancelButton"/>
+            <Button text="{i18n>cancelDialogButton}" press=".handleCancelButton"/>
         </endButton>
 
     </Dialog>

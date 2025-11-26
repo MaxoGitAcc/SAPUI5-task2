@@ -8,8 +8,9 @@ sap.ui.define([
     "sap/m/Text",
     "sap/m/Button",
     "sap/ui/core/Fragment",
-    "sap/m/MessageToast"
-], (BaseController, Validation, Filter, FilterOperator, Dialog, DialogType, Text, Button, Fragment, MessageToast) => {
+    "sap/m/MessageToast",
+    "project1/util/formatter"
+], (BaseController, Validation, Filter, FilterOperator, Dialog, DialogType, Text, Button, Fragment, MessageToast, formatter) => {
     "use strict";
 
     return BaseController.extend("project1.controller.View1", {
@@ -32,6 +33,8 @@ sap.ui.define([
         
             this._selectedGenre = oGenreModel.getProperty("/defaultGenre");
         },
+
+        formatter: formatter,
 
         //Buttons
         _createAddDialog: async function () {
@@ -120,7 +123,8 @@ sap.ui.define([
             const oDialog = await this._createAddDialog();
             oDialog.close()
             
-            MessageToast.show("Book Added");
+            var oBundle = this.getModel("i18n").getResourceBundle();
+            MessageToast.show(oBundle.getText("addedNewBook"));
             
             this._resetDialogFields();
         },
@@ -203,7 +207,8 @@ sap.ui.define([
             var sName = oModel.getProperty(oContext.getPath() + "/Name");
             
             if (!sName) {
-                MessageToast.show("Title cannot be empty.");
+                var oBundle = this.getModel("i18n").getResourceBundle();
+                MessageToast.show(oBundle.getText("changedTitleIncorectly"));
                 return;
             }
         

@@ -10,19 +10,19 @@
                     <ToolbarSpacer />
                     <SearchField id="searchField"
                         width="50%"
-                        placeholder="Search by title..."
+                        placeholder="{i18n>placeHolderSearchBar}"
                         search=".onSearch"/>
                 </Toolbar>
                 <Table id="bookTable" items="{bookModel1>/books}" mode="MultiSelect">
 
                     <headerToolbar>
                         <Toolbar id="bookTableToolbar">
-                            <Title id="bookTableTitle" text="Books" />
+                            <Title id="bookTableTitle" text="{i18n>header}" />
 
                             <ToolbarSpacer />
 
-                            <Button text="Add Record" press=".onAddRecord" type="Accept"/>
-                            <Button text="Delete Record" press=".onDeleteRecord" type="Reject"></Button>
+                            <Button text="{i18n>addButton}" press=".onAddRecord" type="Accept"/>
+                            <Button text="{i18n>deleteButton}" press=".onDeleteRecord" type="Reject"></Button>
 
                             <ToolbarSeparator />
 
@@ -32,18 +32,18 @@
                                 <core:Item key="{genreModel>key}" text="{genreModel>text}" />
                             </Select>
 
-                            <Button text="Filter" press=".onApplyFilter" type="Emphasized"/>
+                            <Button text="{i18n>filterButton}" press=".onApplyFilter" type="Emphasized"/>
                         </Toolbar>
                     </headerToolbar>
 
                     <columns>
-                        <Column ><Text text="ID"/></Column>
-                        <Column ><Text text="Name"/></Column>
-                        <Column ><Text text="Author"/></Column>
-                        <Column ><Text text="Genre"/></Column>
-                        <Column ><Text text="Release Data"/></Column>
-                        <Column ><Text text="Available Quantity"/></Column>
-                        <Column ><Text text="Actions"></Text></Column>
+                        <Column ><Text text="{i18n>id}"/></Column>
+                        <Column ><Text text="{i18n>name}"/></Column>
+                        <Column ><Text text="{i18n>author}"/></Column>
+                        <Column ><Text text="{i18n>genre}"/></Column>
+                        <Column ><Text text="{i18n>releaseDate}"/></Column>
+                        <Column ><Text text="{i18n>availableQuantity}"/></Column>
+                        <Column ><Text text="{i18n>actions}"/></Column>
                     </columns>
 
                     <items>
@@ -56,7 +56,11 @@
                                 </HBox>
                                 <Text text="{bookModel1>Author}"></Text>
                                 <Text text="{bookModel1>Genre}"></Text>
-                                <Text text="{bookModel1>ReleaseDate}"></Text>
+                                <Text text="{
+                                    parts: [
+                                        { path: 'i18n>publishedString' },
+                                        { path: 'bookModel1>ReleaseDate' }
+                                    ], formatter: '.formatter.formatYear'}"/>
                                 <Text text="{bookModel1>AvailableQuantity}"></Text>
                                 <HBox >
                                     <Button text="Edit" 
