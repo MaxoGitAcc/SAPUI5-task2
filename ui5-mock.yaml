@@ -1,0 +1,41 @@
+specVersion: "3.1"
+metadata:
+  name: mockserver1
+type: application
+server:
+  customMiddleware:
+    - name: fiori-tools-proxy
+      afterMiddleware: compression
+      configuration:
+        ignoreCertErrors: false
+        ui5:
+          path:
+            - /resources
+            - /test-resources
+          url: https://ui5.sap.com
+    - name: fiori-tools-appreload
+      afterMiddleware: compression
+      configuration:
+        port: 35729
+        path: webapp
+        delay: 300
+    - name: fiori-tools-preview
+      afterMiddleware: fiori-tools-appreload
+      configuration:
+        flp:
+          theme: sap_horizon
+    - name: sap-fe-mockserver
+      beforeMiddleware: csp
+      configuration:
+        mountPath: /
+        watch: true
+        services:
+          - urlPath: /V2/OData/OData.svc/
+            metadataPath: ./webapp/localService/metadataV2.xml
+            mockdataPath: ./webapp/localService/mockdataV2
+            generateMockData: true
+          - urlPath: /V4/OData/OData.svc/
+            metadataPath: ./webapp/localService/metadataV4.xml
+            mockdataPath: ./webapp/localService/mockdataV4
+            generateMockData: true
+        annotations: []
