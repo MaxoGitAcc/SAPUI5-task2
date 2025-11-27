@@ -1,0 +1,50 @@
+{
+    "products": [
+      {
+        "ID": "1",
+        "Name": "MacBook Air M1",
+        "Description": "Apple MacBook Air with M1 chip, 13-inch Retina display",
+        "ReleaseDate": "2020-11-17",
+        "DiscontinuedDate": "Active",
+        "Rating": 5,
+        "Price": 999.99
+      },
+      {
+        "ID": "2",
+        "Name": "MacBook Air M2",
+        "Description": "Apple MacBook Air with M2 chip, 13-inch Retina display",
+        "ReleaseDate": "2022-07-15",
+        "DiscontinuedDate": "Active",
+        "Rating": 5,
+        "Price": 1199.99
+      },
+      {
+        "ID": "3",
+        "Name": "MacBook Pro 13-inch M1",
+        "Description": "Apple MacBook Pro with M1 chip, 13-inch Retina display",
+        "ReleaseDate": "2020-11-17",
+        "DiscontinuedDate": "2022-06-30",
+        "Rating": 4,
+        "Price": 1299.99
+      },
+      {
+        "ID": "4",
+        "Name": "MacBook Pro 14-inch M2 Pro",
+        "Description": "Apple MacBook Pro with M2 Pro chip, 14-inch Liquid Retina XDR display",
+        "ReleaseDate": "2023-01-24",
+        "DiscontinuedDate": "Active",
+        "Rating": 5,
+        "Price": 1999.99
+      },
+      {
+        "ID": "5",
+        "Name": "MacBook Pro 16-inch M2 Max",
+        "Description": "Apple MacBook Pro with M2 Max chip, 16-inch Liquid Retina XDR display",
+        "ReleaseDate": "2023-01-24",
+        "DiscontinuedDate": "Active",
+        "Rating": 5,
+        "Price": 3499.99
+      }
+    ]
+  }
+  
