@@ -1,0 +1,50 @@
+{
+    "products": [
+      {
+        "ID": 1,
+        "Name": "iPhone 14",
+        "Description": "Latest iPhone with A15 Bionic chip",
+        "ReleaseDate": "2022-09-16",
+        "DiscontinuedDate": "Active",
+        "Rating": 5,
+        "Price": 799.00
+      },
+      {
+        "ID": 2,
+        "Name": "iPhone 13",
+        "Description": "iPhone with dual-camera system",
+        "ReleaseDate": "2021-09-24",
+        "DiscontinuedDate": "Active",
+        "Rating": 4,
+        "Price": 699.00
+      },
+      {
+        "ID": 3,
+        "Name": "iPhone 12",
+        "Description": "5G capable iPhone with OLED display",
+        "ReleaseDate": "2020-10-23",
+        "DiscontinuedDate": "2022-09-16",
+        "Rating": 4,
+        "Price": 599.00
+      },
+      {
+        "ID": 4,
+        "Name": "iPhone SE (2nd Gen)",
+        "Description": "Compact iPhone with Touch ID",
+        "ReleaseDate": "2020-04-24",
+        "DiscontinuedDate": "Active",
+        "Rating": 3,
+        "Price": 399.00
+      },
+      {
+        "ID": 5,
+        "Name": "iPhone 11",
+        "Description": "iPhone with dual-camera system and Liquid Retina display",
+        "ReleaseDate": "2019-09-20",
+        "DiscontinuedDate": "2021-09-24",
+        "Rating": 4,
+        "Price": 499.00
+      }
+    ]
+  }
+  
