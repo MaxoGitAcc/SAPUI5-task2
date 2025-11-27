@@ -245,7 +245,50 @@ sap.ui.define([
             }
         
             oBinding.filter(aFilters);
-        }
-        
+        },
+
+
+
+        // oDataV2 //
+        onDeleteODataV2: function() {
+            if(!this.oDeleteDialog) {
+                this.oDeleteDialog = new Dialog({
+                    type: DialogType.Message,
+                    title: this.getModel("i18n").getProperty("v2DeleteDialogTitle"),
+                    content: new Text({text: this.getModel("i18n").getProperty("v2DeleteDialogConfiramtionText")}),
+                    beginButton: new Button({
+                        text: "Yes",
+                        press: function() {
+                            var oTable = this.byId("productTableV2");
+                            var aSelectedProducts = oTable.getSelectedItems();
+                            var oModel = this.getModel("productModelV2");
+                            var aProduct = oModel.getProperty("/products");
+
+                            var aSelectedIds = aSelectedProducts.map(function(oProduct) {
+                                return oProduct.getBindingContext("productModelV2").getProperty("ID");
+                            })
+
+                            var aRemainingProducts = aProduct.filter(function(oProduct) {
+                                return !aSelectedIds.includes(oProduct.ID);
+                            })
+
+                            oModel.setProperty("/products", aRemainingProducts);
+                            oTable.removeSelections()
+
+                            this.oDeleteDialog.close();
+
+                            MessageToast.show(this.getModel("i18n").getProperty("v2DeleteSuccessMessage"));
+                        }.bind(this)
+                    }),
+                    endButton: new Button({
+                        text: "No",
+                        press: function() {
+                            this.oDeleteDialog.close();
+                        }.bind(this)
+                    })
+                })
+            }
+            this.oDeleteDialog.open();
+        },
     });
 });
