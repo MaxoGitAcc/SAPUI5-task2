@@ -88,6 +88,13 @@
                 <Table id="productTableV2" items="{ 
                     path: 'oDataV2Model>/Products', parameters: {expend: 'Supplier'}}" 
                     mode="MultiSelect">
+
+                    <headerToolbar>
+                        <Toolbar >
+                            <ToolbarSpacer />
+                            <Button text="{i18n>v2Delete}" type="Reject" press="onDeleteV2"/>
+                        </Toolbar>
+                    </headerToolbar>
                 
                     <columns>
                         <Column><Text text="{i18n>v2Id}"/></Column>

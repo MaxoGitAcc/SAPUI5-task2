@@ -9,8 +9,9 @@ sap.ui.define([
     "sap/m/Button",
     "sap/ui/core/Fragment",
     "sap/m/MessageToast",
-    "project1/util/formatter"
-], (BaseController, Validation, Filter, FilterOperator, Dialog, DialogType, Text, Button, Fragment, MessageToast, formatter) => {
+    "project1/util/formatter",
+    "sap/m/MessageBox"
+], (BaseController, Validation, Filter, FilterOperator, Dialog, DialogType, Text, Button, Fragment, MessageToast, formatter, MessageBox) => {
     "use strict";
 
     return BaseController.extend("project1.controller.View1", {
@@ -246,5 +247,33 @@ sap.ui.define([
         
             oBinding.filter(aFilters);
         },
+
+        //////oDataV2//////
+        onDeleteV2: function() {
+            var oTable = this.byId("productTableV2");
+            var aItems = oTable.getSelectedItems().map(item => {
+                return item.getBindingContext("oDataV2Model").getObject()["ID"]
+            });
+            var oModel = this.getModel("oDataV2Model");
+
+            aItems.forEach(id => {
+                var sPath = `/Products(${id})`
+
+                oModel.remove(sPath, {
+                     success: () => {
+                        var oBundle = this.getModel("i18n").getResourceBundle();
+                        const alt = oBundle.getText("v2SuccessAlt");
+                        MessageToast.show(alt)
+                     },
+
+                     error: () => {
+                        var oBundle = this.getModel("i18n").getResourceBundle();
+                        const alt = oBundle.getText("v2ErrorAlt");
+                        MessageBox.error(alt);
+                        MessageToast.show(alt);
+                     }
+                });
+            });
+        }
     });
 });
