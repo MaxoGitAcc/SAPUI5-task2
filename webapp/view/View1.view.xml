@@ -85,16 +85,10 @@
             </IconTabFilter>
 
             <IconTabFilter text="{i18n>oDataV2}" key="oDataV2">
-                <Table id="productTableV2" items="{productModelV2>/products}" mode="MultiSelect">
+                <Table id="productTableV2" items="{ 
+                    path: 'oDataV2Model>/Products', parameters: {expend: 'Supplier'}}" 
+                    mode="MultiSelect">
                 
-                    <headerToolbar>
-                        <Toolbar id="oDataV2ToolBar">
-                            <Title text="{i18n>v2Header}"/>
-                            <ToolbarSpacer />
-                            <Button text="{i18n>v2Delete}" press=".onDeleteODataV2" type="Reject"/>
-                        </Toolbar>
-                    </headerToolbar>
-
                     <columns>
                         <Column><Text text="{i18n>v2Id}"/></Column>
                         <Column><Text text="{i18n>v2Name}"/></Column>
@@ -107,40 +101,42 @@
                     <items>
                         <ColumnListItem>
                             <cells>
-                                <Text text="{productModelV2>ID}"/>
-                                <Text text="{productModelV2>Name}"/>
-                                <Text text="{productModelV2>Description}"/>
-                                <Text text="{productModelV2>ReleaseDate}"/>
-                                <Text text="{productModelV2>DiscontinuedDate}"/>
-                                <Text text="{productModelV2>Rating}"/>
-                                <Text text="{productModelV2>Price}"/>
+                                <Text text="{oDataV2Model>ID}"/>
+                                <Text text="{oDataV2Model>Name}"/>
+                                <Text text="{oDataV2Model>Description}"/>
+                                <Text text="{oDataV2Model>ReleaseDate}"/>
+                                <Text text="{oDataV2Model>DiscontinuedDate}"/>
+                                <Text text="{oDataV2Model>Rating}"/>
+                                <Text text="{oDataV2Model>Price}"/>
                             </cells>
                         </ColumnListItem>
                     </items>
                 </Table>
             </IconTabFilter>
-
-            <IconTabFilter text="{i18n>oDataV4}" key="oData v4 Model">
-                <Table id="productTableV4" items="{productModelV4>/products}">
+            <IconTabFilter text="{i18n>oDataV4}" key="oDataV4">
+                <Table id="productTableV4" items="{ 
+                    path: 'oDataV4Model>/Products', parameters: {expend: 'Supplier'}}" 
+                    mode="MultiSelect">
+                
                     <columns>
-                        <Column><Text text="{i18n>v4Id}"/></Column>
-                        <Column><Text text="{i18n>v4Name}"/></Column>
-                        <Column><Text text="{i18n>v4Description}"/></Column>
-                        <Column><Text text="{i18n>v4ReleaseDate}"/></Column>
-                        <Column><Text text="{i18n>v4DiscontinuedDate}"/></Column>
-                        <Column><Text text="{i18n>v4Rating}"/></Column>
-                        <Column><Text text="{i18n>v4Price}"/></Column>
+                        <Column><Text text="{i18n>v2Id}"/></Column>
+                        <Column><Text text="{i18n>v2Name}"/></Column>
+                        <Column><Text text="{i18n>v2Description}"/></Column>
+                        <Column><Text text="{i18n>v2ReleaseDate}"/></Column>
+                        <Column><Text text="{i18n>v2DiscontinuedDate}"/></Column>
+                        <Column><Text text="{i18n>v2Rating}"/></Column>
+                        <Column><Text text="{i18n>v2Price}"/></Column>
                     </columns>
                     <items>
                         <ColumnListItem>
                             <cells>
-                                <Text text="{productModelV4>ID}"/>
-                                <Text text="{productModelV4>Name}"/>
-                                <Text text="{productModelV4>Description}"/>
-                                <Text text="{productModelV4>ReleaseDate}"/>
-                                <Text text="{productModelV4>DiscontinuedDate}"/>
-                                <Text text="{productModelV4>Rating}"/>
-                                <Text text="{productModelV4>Price}"/>
+                                <Text text="{oDataV4Model>ID}"/>
+                                <Text text="{oDataV4Model>Name}"/>
+                                <Text text="{oDataV4Model>Description}"/>
+                                <Text text="{oDataV4Model>ReleaseDate}"/>
+                                <Text text="{oDataV4Model>DiscontinuedDate}"/>
+                                <Text text="{oDataV4Model>Rating}"/>
+                                <Text text="{oDataV4Model>Price}"/>
                             </cells>
                         </ColumnListItem>
                     </items>
