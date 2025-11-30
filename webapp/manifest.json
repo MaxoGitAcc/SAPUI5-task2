@@ -74,14 +74,6 @@
         "type": "sap.ui.model.json.JSONModel",
         "uri": "model/books.json"
       },
-      "productModelV2": {
-        "type": "sap.ui.model.json.JSONModel",
-        "uri": "localService/oDataV2/Products.json"
-      },
-      "productModelV4": {
-        "type": "sap.ui.model.json.JSONModel",
-        "uri": "localService/oDataV4/Products.json"
-      },
       "genreModel": {
         "type": "sap.ui.model.json.JSONModel",
         "uri": "model/genres.json"

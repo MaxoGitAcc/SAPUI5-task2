@@ -245,7 +245,6 @@ sap.ui.define([
             }
         
             oBinding.filter(aFilters);
-        }
-        
+        },
     });
 });
