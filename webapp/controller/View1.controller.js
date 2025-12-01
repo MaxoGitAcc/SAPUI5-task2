@@ -255,6 +255,7 @@ sap.ui.define([
                 return item.getBindingContext("oDataV2Model").getObject()["ID"]
             });
             var oModel = this.getModel("oDataV2Model");
+            
 
             aItems.forEach(id => {
                 var sPath = `/Products(${id})`
@@ -262,16 +263,28 @@ sap.ui.define([
                 oModel.remove(sPath, {
                      success: () => {
                         var oBundle = this.getModel("i18n").getResourceBundle();
-                        const alt = oBundle.getText("v2SuccessAlt");
-                        MessageToast.show(alt)
+                        const sSuccess = oBundle.getText("v2SuccessAlert");
+                        MessageToast.show(sSuccess);
                      },
 
-                     error: () => {
+                     error: (oError) => {
+                        let sErrorMessage = "";
                         var oBundle = this.getModel("i18n").getResourceBundle();
-                        const alt = oBundle.getText("v2ErrorAlt");
-                        MessageBox.error(alt);
-                        MessageToast.show(alt);
-                     }
+                        const sFallback = oBundle.getText("v2ErrorAlert");
+                    
+                        try {
+                            if (oError?.responseText) {
+                                const oErrObj = JSON.parse(oError.responseText);
+                                sErrorMessage = oErrObj?.error?.message?.value || "";
+                            } else if (oError?.message) {
+                                sErrorMessage = oError.message;
+                            }
+                        } catch (e) {
+                            console.warn("Error parsing response:", e);
+                        }
+                    
+                        MessageBox.error(sErrorMessage || sFallback);
+                    }
                 });
             });
         }
