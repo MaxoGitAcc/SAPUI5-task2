@@ -86,7 +86,7 @@
 
             <IconTabFilter text="{i18n>oDataV2}" key="oDataV2">
                 <Table id="productTableV2" items="{ 
-                    path: 'oDataV2Model>/Products', parameters: {expand: 'Supplier'}}" 
+                    path: 'oDataV2Model>/Products'}" 
                     mode="MultiSelect">
 
                     <headerToolbar>
@@ -122,7 +122,7 @@
             </IconTabFilter>
             <IconTabFilter text="{i18n>oDataV4}" key="oDataV4">
                 <Table id="productTableV4" items="{ 
-                    path: 'oDataV4Model>/Products', parameters: {expend: 'Supplier'}}" 
+                    path: 'oDataV4Model>/Products'}" 
                     mode="MultiSelect">
                 
                     <columns>

@@ -256,6 +256,7 @@ sap.ui.define([
             });
             var oModel = this.getModel("oDataV2Model");
             
+            
 
             aItems.forEach(id => {
                 var sPath = `/Products(${id})`
@@ -263,8 +264,10 @@ sap.ui.define([
                 oModel.remove(sPath, {
                      success: () => {
                         var oBundle = this.getModel("i18n").getResourceBundle();
-                        const sSuccess = oBundle.getText("v2SuccessAlert");
-                        MessageToast.show(sSuccess);
+                        const sSuccessMsg = aItems.length > 1 
+                            ? oBundle.getText("v2SuccessAlertMultiple")
+                            : oBundle.getText("v2SuccessAlertSingle");
+                        MessageToast.show(sSuccessMsg);
                      },
 
                      error: (oError) => {
