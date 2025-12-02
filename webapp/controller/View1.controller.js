@@ -9,8 +9,9 @@ sap.ui.define([
     "sap/m/Button",
     "sap/ui/core/Fragment",
     "sap/m/MessageToast",
-    "project1/util/formatter"
-], (BaseController, Validation, Filter, FilterOperator, Dialog, DialogType, Text, Button, Fragment, MessageToast, formatter) => {
+    "project1/util/formatter",
+    "sap/m/MessageBox"
+], (BaseController, Validation, Filter, FilterOperator, Dialog, DialogType, Text, Button, Fragment, MessageToast, formatter, MessageBox) => {
     "use strict";
 
     return BaseController.extend("project1.controller.View1", {
@@ -245,7 +246,53 @@ sap.ui.define([
             }
         
             oBinding.filter(aFilters);
-        }
+        },
+
+        //////oDataV2//////
+        onDeleteV2: function() {
+            var oTable = this.byId("productTableV2");
+            var aItems = oTable.getSelectedItems().map(item => {
+                return item.getBindingContext("oDataV2Model").getObject()["ID"]
+            });
+            var oModel = this.getModel("oDataV2Model");
+
+            var iDeletedCount = 0;
         
+            aItems.forEach(id => {
+                var sPath = `/Products(${id})`
+                oModel.remove(sPath, {
+                    success: () => {
+                        var oBundle = this.getModel("i18n").getResourceBundle();
+                        iDeletedCount++;
+                        if(iDeletedCount === aItems.length) {
+                            if(aItems.length > 1) {
+                                MessageToast.show(oBundle.getText("v2SuccessAlertMultiple"));
+                            } else {
+                                MessageToast.show(oBundle.getText("v2SuccessAlertSingle"));
+                            }
+                        }
+                    },
+
+                    error: (oError) => {
+                        let sErrorMessage = "";
+                        var oBundle = this.getModel("i18n").getResourceBundle();
+                        const sFallback = oBundle.getText("v2ErrorAlert");
+
+                        try {
+                            if (oError?.responseText) {
+                                const oErrObj = JSON.parse(oError.responseText);
+                                sErrorMessage = oErrObj?.error?.message?.value || "";
+                            } else if (oError?.message) {
+                                sErrorMessage = oError.message;
+                            }
+                        } catch (e) {
+                            console.warn("Error parsing response:", e);
+                        }
+
+                        MessageBox.error(sErrorMessage || sFallback);
+                    }
+                });
+            });
+        }        
     });
 });
