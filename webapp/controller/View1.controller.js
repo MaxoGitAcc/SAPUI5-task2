@@ -255,27 +255,29 @@ sap.ui.define([
                 return item.getBindingContext("oDataV2Model").getObject()["ID"]
             });
             var oModel = this.getModel("oDataV2Model");
-            
-            
 
+            var iDeletedCount = 0;
+        
             aItems.forEach(id => {
                 var sPath = `/Products(${id})`
-
                 oModel.remove(sPath, {
-                     success: () => {
+                    success: () => {
                         var oBundle = this.getModel("i18n").getResourceBundle();
-                        if(aItems.length > 1) {
-                            MessageToast.show(oBundle.getText("v2SuccessAlertMultiple"))
-                        } else {
-                            MessageToast.show(oBundle.getText("v2SuccessAlertSingle"))
+                        iDeletedCount++;
+                        if(iDeletedCount === aItems.length) {
+                            if(aItems.length > 1) {
+                                MessageToast.show(oBundle.getText("v2SuccessAlertMultiple"));
+                            } else {
+                                MessageToast.show(oBundle.getText("v2SuccessAlertSingle"));
+                            }
                         }
-                     },
+                    },
 
-                     error: (oError) => {
+                    error: (oError) => {
                         let sErrorMessage = "";
                         var oBundle = this.getModel("i18n").getResourceBundle();
                         const sFallback = oBundle.getText("v2ErrorAlert");
-                    
+
                         try {
                             if (oError?.responseText) {
                                 const oErrObj = JSON.parse(oError.responseText);
@@ -286,11 +288,11 @@ sap.ui.define([
                         } catch (e) {
                             console.warn("Error parsing response:", e);
                         }
-                    
+
                         MessageBox.error(sErrorMessage || sFallback);
                     }
                 });
             });
-        }
+        }        
     });
 });
