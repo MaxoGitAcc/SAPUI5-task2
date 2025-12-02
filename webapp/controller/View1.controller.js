@@ -264,10 +264,11 @@ sap.ui.define([
                 oModel.remove(sPath, {
                      success: () => {
                         var oBundle = this.getModel("i18n").getResourceBundle();
-                        const sSuccessMsg = aItems.length > 1 
-                            ? oBundle.getText("v2SuccessAlertMultiple")
-                            : oBundle.getText("v2SuccessAlertSingle");
-                        MessageToast.show(sSuccessMsg);
+                        if(aItems.length > 1) {
+                            MessageToast.show(oBundle.getText("v2SuccessAlertMultiple"))
+                        } else {
+                            MessageToast.show(oBundle.getText("v2SuccessAlertSingle"))
+                        }
                      },
 
                      error: (oError) => {
