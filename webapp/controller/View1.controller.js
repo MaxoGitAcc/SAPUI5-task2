@@ -11,8 +11,9 @@ sap.ui.define([
     "sap/ui/core/Fragment",
     "sap/m/MessageToast",
     "project1/util/formatter",
-    "sap/m/MessageBox"
-], (BaseController, Validation, v2Validations, Filter, FilterOperator, Dialog, DialogType, Text, Button, Fragment, MessageToast, formatter, MessageBox) => {
+    "sap/m/MessageBox",
+    "sap/ui/core/date/UI5Date",
+], (BaseController, Validation, v2Validations, Filter, FilterOperator, Dialog, DialogType, Text, Button, Fragment, MessageToast, formatter, MessageBox, UI5Date) => {
     "use strict";
 
     return BaseController.extend("project1.controller.View1", {
@@ -337,9 +338,9 @@ sap.ui.define([
             const sPrice = this.byId("v2NewProductPrice").getValue();
         
         
-            const oReleaseDate = new Date(sReleaseDate);
-            const oDiscontinuedDate = new Date(sDiscontinuedDate);
-        
+            const oReleaseDate = UI5Date.getInstance(sReleaseDate);
+            const oDiscontinuedDate = UI5Date.getInstance(sDiscontinuedDate);
+             
             const oNewProduct = {
                 Name: sName,
                 Description: sDescription,
