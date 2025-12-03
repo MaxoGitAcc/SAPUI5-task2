@@ -87,11 +87,12 @@
             <IconTabFilter text="{i18n>oDataV2}" key="oDataV2">
                 <Table id="productTableV2" items="{ 
                     path: 'oDataV2Model>/Products'}" 
-                    mode="MultiSelect">
+                    mode="MultiSelect" growing="true" growingThreshold="50">
 
                     <headerToolbar>
                         <Toolbar >
                             <ToolbarSpacer />
+                            <Button  text="{i18n>v2AddNewRecord}" type="Accept" press="onAddRecordV2"/>
                             <Button text="{i18n>v2Delete}" type="Reject" press="onDeleteV2"/>
                         </Toolbar>
                     </headerToolbar>
@@ -123,7 +124,7 @@
             <IconTabFilter text="{i18n>oDataV4}" key="oDataV4">
                 <Table id="productTableV4" items="{ 
                     path: 'oDataV4Model>/Products'}" 
-                    mode="MultiSelect">
+                    mode="MultiSelect" growing="true" growingThreshold="50">
                 
                     <columns>
                         <Column><Text text="{i18n>v2Id}"/></Column>

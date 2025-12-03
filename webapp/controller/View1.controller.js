@@ -1,6 +1,7 @@
 sap.ui.define([
     "project1/controller/BaseController",
     "project1/util/Validation",
+    "project1/util/v2Validations",
     "sap/ui/model/Filter",
     "sap/ui/model/FilterOperator",
     "sap/m/Dialog",
@@ -10,8 +11,8 @@ sap.ui.define([
     "sap/ui/core/Fragment",
     "sap/m/MessageToast",
     "project1/util/formatter",
-    "sap/m/MessageBox"
-], (BaseController, Validation, Filter, FilterOperator, Dialog, DialogType, Text, Button, Fragment, MessageToast, formatter, MessageBox) => {
+    "sap/m/MessageBox",
+], (BaseController, Validation, v2Validations, Filter, FilterOperator, Dialog, DialogType, Text, Button, Fragment, MessageToast, formatter, MessageBox) => {
     "use strict";
 
     return BaseController.extend("project1.controller.View1", {
@@ -293,6 +294,135 @@ sap.ui.define([
                     }
                 });
             });
-        }        
+        },
+        
+
+        // Add Product V2
+        onAddRecordV2: function () {
+            this._createV2addDialog();
+        },
+        
+        _createV2addDialog: async function () {
+            if (!this._oV2AddDialog) {
+                this._oV2AddDialog = await this.loadFragment({
+                  name: "project1.view.V2AddProductDialog",
+                });
+                
+                this._v2SetupValidators();
+                this.getView().addDependent(this._oV2AddDialog);
+            }
+        
+            return this._oV2AddDialog.open();
+        },
+
+        v2CloseProduct: function() {
+            const oDialog = this._oV2AddDialog;
+            this._v2ResetDialogFields();
+            oDialog.close();
+        },
+
+        v2SaveProduct: function () {
+            if (!this._v2ValidateRequredFields()) {
+                return;
+            }
+
+            const oDialog = this._oV2AddDialog;
+            const oModel = this.getModel("oDataV2Model");
+        
+            const sName = this.byId("v2NewProductName").getValue();
+            const sDescription = this.byId("v2NewProductDescription").getValue();
+            const sReleaseDate = this.byId("v2NewProductReleaseDate").getDateValue();
+            const sDiscontinuedDate = this.byId("v2NewProductDiscontinuedDate").getDateValue();
+            const sRating = this.byId("v2NewProductRating").getValue();
+            const sPrice = this.byId("v2NewProductPrice").getValue();
+        
+             
+            const oNewProduct = {
+                Name: sName,
+                Description: sDescription,
+                ReleaseDate: sReleaseDate,
+                DiscontinuedDate: sDiscontinuedDate,
+                Rating: Number(sRating),
+                Price: Number(sPrice)
+            };
+        
+            oModel.create("/Products", oNewProduct, {
+                success: () => {
+                    const oBundle = this.getModel("i18n").getResourceBundle();
+                    MessageToast.show(oBundle.getText("v2AddingProductSuccess"));
+                    this._v2ResetDialogFields();  
+                    oModel.refresh();
+                    oDialog.close();
+                },
+                error: (oError) => {
+                    const oBundle = this.getModel("i18n").getResourceBundle();
+                    const sFallback = oBundle.getText("v2AddingProductError");
+                    let sErrorMessage = "";
+                
+                    try {
+                        if (oError?.responseText) {
+                            const oErrObj = JSON.parse(oError.responseText);
+                            sErrorMessage = oErrObj?.error?.message?.value || "";
+                        } else if (oError?.message) {
+                            sErrorMessage = oError.message;
+                        }
+                    } catch (e) {
+                        console.warn("Error parsing BE response:", e);
+                    }
+                
+                    MessageBox.error(sErrorMessage || sFallback);
+                }    
+            });
+        },  
+
+        _v2SetupValidators: function() {
+            const oBundle = this.getModel("i18n").getResourceBundle();
+            this._v2Validators = {
+                "v2NewProductName": { fn: v2Validations.isNotEmpty, msg: oBundle.getText('v2NameValidator') },
+                "v2NewProductDescription": {fn: v2Validations.isNotEmpty, msg: oBundle.getText('v2DescriptionValidator')},
+                "v2NewProductReleaseDate": {fn: v2Validations.isValidDate, msg: oBundle.getText('v2ReleaseDateValidator')},
+                "v2NewProductDiscontinuedDate": {fn: v2Validations.isValidDate, msg: oBundle.getText('v2DiscontinuedDateValidator')},
+                "v2NewProductRating": {fn: v2Validations.isPositiveNumber, msg: oBundle.getText('v2RatingValidator')},
+                "v2NewProductPrice": {fn: v2Validations.isPositiveNumber, msg: oBundle.getText('v2PriceValidator')}
+            }
+        },
+
+        v2OnLiveValidate: function(oEvent) {
+            const oControl = oEvent.getSource();
+            const sId = oControl.getId().split("--").pop();
+            const validator = this._v2Validators[sId];
+        
+            if (validator) {
+                validator.fn(oControl, validator.msg);
+            }
+        },
+
+        _v2ValidateRequredFields: function () {
+            let bValid = true;
+        
+            for (let sId in this._v2Validators) {
+                const oControl = this.byId(sId);
+                const validator = this._v2Validators[sId];
+        
+                if (oControl && validator) {
+                    if (!validator.fn(oControl, validator.msg)) {
+                        bValid = false;
+                    }
+                }
+            }
+        
+            return bValid;
+        },
+
+        _v2ResetDialogFields: function() {
+            const aInputs = Object.keys(this._v2Validators);
+            aInputs.forEach(id => {
+                const oControl = this.byId(id);
+                if (oControl) {
+                    oControl.setValue("");
+                    oControl.setValueState("None");
+                }
+            });
+        }
     });
 });

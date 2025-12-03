@@ -1,0 +1,35 @@
+<core:FragmentDefinition
+    xmlns="sap.m"
+    xmlns:core="sap.ui.core">
+
+    <Dialog id="v2AddProductDialog" title="Add new Product" contentWidth="400px">
+
+        <VBox class="sapUi-Std-PaddingS">
+            <Input id="v2NewProductName" placeholder="{i18n>v2NameInputPlaceholder}" required="true" liveChange=".v2OnLiveValidate"/>
+            <Input id="v2NewProductDescription" placeholder="{i18n>v2DescriptionInputPlaceholder}" required="true"  liveChange=".v2OnLiveValidate"/>
+            <DatePicker id="v2NewProductReleaseDate" 
+                placeholder="{i18n>v2ReleaseDateInputPlaceholder}" 
+                displayFormat="dd-MM-yyyy" 
+                valueFormat="yyyy-MM-dd" 
+                required="true" change=".v2OnLiveValidate"/>
+
+            <DatePicker id="v2NewProductDiscontinuedDate" 
+                placeholder="{i18n>v2DiscontinuedDateInputPlaceholder}" 
+                displayFormat="dd-MM-yyyy" 
+                valueFormat="yyyy-MM-dd" 
+                required="true" change=".v2OnLiveValidate" />
+            <Input id="v2NewProductRating" placeholder="{i18n>v2RatingInputPlaceholder}" type="Number" required="true" liveChange=".v2OnLiveValidate"/>
+            <Input id="v2NewProductPrice" placeholder="{i18n>v2PriceInputPlaceholder}" type="Number" required="true" liveChange=".v2OnLiveValidate"/>
+        </VBox>
+
+        <beginButton>
+            <Button text="{i18n>v2FragmentAddButton}" press=".v2SaveProduct"/>
+        </beginButton>
+
+        <endButton>
+            <Button text="{i18n>v2FragmentCaneleButton}" press=".v2CloseProduct"/>
+        </endButton>
+
+    </Dialog>
+
+</core:FragmentDefinition>
