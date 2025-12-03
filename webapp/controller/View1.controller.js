@@ -12,8 +12,7 @@ sap.ui.define([
     "sap/m/MessageToast",
     "project1/util/formatter",
     "sap/m/MessageBox",
-    "sap/ui/core/date/UI5Date",
-], (BaseController, Validation, v2Validations, Filter, FilterOperator, Dialog, DialogType, Text, Button, Fragment, MessageToast, formatter, MessageBox, UI5Date) => {
+], (BaseController, Validation, v2Validations, Filter, FilterOperator, Dialog, DialogType, Text, Button, Fragment, MessageToast, formatter, MessageBox) => {
     "use strict";
 
     return BaseController.extend("project1.controller.View1", {
@@ -332,20 +331,17 @@ sap.ui.define([
         
             const sName = this.byId("v2NewProductName").getValue();
             const sDescription = this.byId("v2NewProductDescription").getValue();
-            const sReleaseDate = this.byId("v2NewProductReleaseDate").getValue();
-            const sDiscontinuedDate = this.byId("v2NewProductDiscontinuedDate").getValue();
+            const sReleaseDate = this.byId("v2NewProductReleaseDate").getDateValue();
+            const sDiscontinuedDate = this.byId("v2NewProductDiscontinuedDate").getDateValue();
             const sRating = this.byId("v2NewProductRating").getValue();
             const sPrice = this.byId("v2NewProductPrice").getValue();
         
-        
-            const oReleaseDate = UI5Date.getInstance(sReleaseDate);
-            const oDiscontinuedDate = UI5Date.getInstance(sDiscontinuedDate);
              
             const oNewProduct = {
                 Name: sName,
                 Description: sDescription,
-                ReleaseDate: oReleaseDate,
-                DiscontinuedDate: oDiscontinuedDate,
+                ReleaseDate: sReleaseDate,
+                DiscontinuedDate: sDiscontinuedDate,
                 Rating: Number(sRating),
                 Price: Number(sPrice)
             };
