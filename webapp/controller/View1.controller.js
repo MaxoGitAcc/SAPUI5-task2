@@ -355,7 +355,6 @@ sap.ui.define([
                         const oBundle = this.getModel("i18n").getResourceBundle();
                         MessageToast.show(oBundle.getText("v2EditProductSuccess"));
                         
-                        this._v2ResetDialogFields();
                         this._isEditMode = false;
                         this._editedProductPath = null;
             
@@ -470,21 +469,15 @@ sap.ui.define([
         v2OnEditInput: async function (oEvent) {
             const oContext = oEvent.getSource().getBindingContext("oDataV2Model");
             const sPath = oContext.getPath();      
-            const oData = oContext.getObject(); 
         
             this._isEditMode = true;
             this._editedProductPath = sPath;
         
             const oDialog = await this._createV2addDialog();
 
-            this.byId("v2NewProductName").setValue(oData.Name);
-            this.byId("v2NewProductDescription").setValue(oData.Description);
-            this.byId("v2NewProductReleaseDate").setDateValue(oData.ReleaseDate);
-            this.byId("v2NewProductDiscontinuedDate").setDateValue(oData.DiscontinuedDate);
-            this.byId("v2NewProductRating").setValue(oData.Rating);
-            this.byId("v2NewProductPrice").setValue(oData.Price);
+            oDialog.setBindingContext(oContext, "oDataV2Model");
         
-
+            
             oDialog.open();
         }
     });
