@@ -298,8 +298,9 @@ sap.ui.define([
         
 
         // Add Product V2
-        onAddRecordV2: function () {
-            this._createV2addDialog();
+        onAddRecordV2: async function () {
+            const oDialog = await this._createV2addDialog();
+            oDialog.open();
         },
         
         _createV2addDialog: async function () {
@@ -312,12 +313,14 @@ sap.ui.define([
                 this.getView().addDependent(this._oV2AddDialog);
             }
         
-            return this._oV2AddDialog.open();
+            return this._oV2AddDialog;
         },
 
         v2CloseProduct: function() {
             const oDialog = this._oV2AddDialog;
             this._v2ResetDialogFields();
+            this._isEditMode = false;
+            this._editedProductPath = null;
             oDialog.close();
         },
 
@@ -345,6 +348,43 @@ sap.ui.define([
                 Rating: Number(sRating),
                 Price: Number(sPrice)
             };
+
+            if (this._isEditMode) {
+                oModel.update(this._editedProductPath, oNewProduct, {
+                    success: () => {
+                        const oBundle = this.getModel("i18n").getResourceBundle();
+                        MessageToast.show(oBundle.getText("v2EditProductSuccess"));
+                        
+                        this._isEditMode = false;
+                        this._editedProductPath = null;
+            
+                        oModel.refresh(true);
+                        oDialog.close();
+                    },
+            
+                    error: (oError) => {
+                        const oBundle = this.getModel("i18n").getResourceBundle();
+                        const sFallback = oBundle.getText("v2EditProductError");
+                        let sErrorMessage = "";
+            
+                        try {
+                            if (oError?.responseText) {
+                                const oErrObj = JSON.parse(oError.responseText);
+                                sErrorMessage = oErrObj?.error?.message?.value || "";
+                            } else if (oError?.message) {
+                                sErrorMessage = oError.message;
+                            }
+                        } catch (e) {
+                            console.warn("Error parsing backend response:", e);
+                        }
+            
+                        MessageBox.error(sErrorMessage || sFallback);
+                    }
+                });
+            
+                return;
+            }            
+        
         
             oModel.create("/Products", oNewProduct, {
                 success: () => {
@@ -423,6 +463,22 @@ sap.ui.define([
                     oControl.setValueState("None");
                 }
             });
+        },
+
+        //Edit button v2
+        v2OnEditInput: async function (oEvent) {
+            const oContext = oEvent.getSource().getBindingContext("oDataV2Model");
+            const sPath = oContext.getPath();      
+        
+            this._isEditMode = true;
+            this._editedProductPath = sPath;
+        
+            const oDialog = await this._createV2addDialog();
+
+            oDialog.setBindingContext(oContext, "oDataV2Model");
+        
+            
+            oDialog.open();
         }
     });
 });
