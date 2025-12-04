@@ -12,7 +12,8 @@ sap.ui.define([
     "sap/m/MessageToast",
     "project1/util/formatter",
     "sap/m/MessageBox",
-], (BaseController, Validation, v2Validations, Filter, FilterOperator, Dialog, DialogType, Text, Button, Fragment, MessageToast, formatter, MessageBox) => {
+    "sap/ui/model/Sorter"
+], (BaseController, Validation, v2Validations, Filter, FilterOperator, Dialog, DialogType, Text, Button, Fragment, MessageToast, formatter, MessageBox, Sorter) => {
     "use strict";
 
     return BaseController.extend("project1.controller.View1", {
@@ -300,6 +301,13 @@ sap.ui.define([
         // Add Product V2
         onAddRecordV2: async function () {
             const oDialog = await this._createV2addDialog();
+            this._isEditMode = false;
+            this._editedProductPath = null;
+
+            oDialog.setModel(null, "editModel");
+            oDialog.setBindingContext(null, "editModel");
+
+            this._v2ResetDialogFields();
             oDialog.open();
         },
         
@@ -318,9 +326,14 @@ sap.ui.define([
 
         v2CloseProduct: function() {
             const oDialog = this._oV2AddDialog;
-            this._v2ResetDialogFields();
+
             this._isEditMode = false;
             this._editedProductPath = null;
+
+            oDialog.setModel(null, "editModel");
+            oDialog.setBindingContext(null, "editModel");
+
+            this._v2ResetDialogFields();
             oDialog.close();
         },
 
@@ -468,17 +481,45 @@ sap.ui.define([
         //Edit button v2
         v2OnEditInput: async function (oEvent) {
             const oContext = oEvent.getSource().getBindingContext("oDataV2Model");
-            const sPath = oContext.getPath();      
+            const oDialog = await this._createV2addDialog();
         
             this._isEditMode = true;
-            this._editedProductPath = sPath;
+            this._editedProductPath = oContext.getPath();
         
-            const oDialog = await this._createV2addDialog();
-
-            oDialog.setBindingContext(oContext, "oDataV2Model");
+            oDialog.setModel(this.getModel("oDataV2Model"), "editModel");
         
-            
+            oDialog.setBindingContext(oContext, "editModel");
+        
             oDialog.open();
-        }
+        },
+
+        //Search V2
+        onSearchByNameField: function (oEvent) {
+            const oTable = this.byId("productTableV2");
+            const oBinding = oTable.getBinding("items");   
+            const sQuery = oEvent.getParameter("newValue");
+            let aFilters = [];
+        
+            if (sQuery) {
+                aFilters.push(new Filter("Name", FilterOperator.Contains, sQuery));
+            }
+        
+            oBinding.filter(aFilters);
+        },
+        
+        //Filter
+        onColumnSelectV2: function (oEvent) {
+            const sKey = oEvent.getParameter("selectedItem").getKey(); 
+            const oTable = this.byId("productTableV2");
+            const oBinding = oTable.getBinding("items");
+            let aSorters = [];
+        
+            if (sKey) {
+                aSorters.push(new Sorter(sKey, true));
+            }
+        
+            oBinding.sort(aSorters);
+        },
+        
     });
 });

@@ -5,21 +5,21 @@
     <Dialog id="v2AddProductDialog" title="Add new Product" contentWidth="400px">
 
         <VBox class="sapUi-Std-PaddingS">
-            <Input id="v2NewProductName" placeholder="{i18n>v2NameInputPlaceholder}" required="true" liveChange=".v2OnLiveValidate" value="{oDataV2Model>Name}"/>
-            <Input id="v2NewProductDescription" placeholder="{i18n>v2DescriptionInputPlaceholder}" required="true"  liveChange=".v2OnLiveValidate" value="{oDataV2Model>Description}"/>
+            <Input id="v2NewProductName" placeholder="{i18n>v2NameInputPlaceholder}" required="true" liveChange=".v2OnLiveValidate" value="{editModel>Name}"/>
+            <Input id="v2NewProductDescription" placeholder="{i18n>v2DescriptionInputPlaceholder}" required="true"  liveChange=".v2OnLiveValidate" value="{editModel>Description}"/>
             <DatePicker id="v2NewProductReleaseDate" 
                 placeholder="{i18n>v2ReleaseDateInputPlaceholder}" 
                 displayFormat="dd-MM-yyyy" 
                 valueFormat="yyyy-MM-dd" 
-                required="true" change=".v2OnLiveValidate" dateValue="{oDataV2Model>ReleaseDate}"/>
+                required="true" change=".v2OnLiveValidate" dateValue="{editModel>ReleaseDate}"/>
 
             <DatePicker id="v2NewProductDiscontinuedDate" 
                 placeholder="{i18n>v2DiscontinuedDateInputPlaceholder}" 
                 displayFormat="dd-MM-yyyy" 
                 valueFormat="yyyy-MM-dd" 
-                required="true" change=".v2OnLiveValidate" dateValue="{oDataV2Model>DiscontinuedDate}"/>
-            <Input id="v2NewProductRating" placeholder="{i18n>v2RatingInputPlaceholder}" type="Number" required="true" liveChange=".v2OnLiveValidate" value="{oDataV2Model>Rating}"/>
-            <Input id="v2NewProductPrice" placeholder="{i18n>v2PriceInputPlaceholder}" type="Number" required="true" liveChange=".v2OnLiveValidate" value="{oDataV2Model>Price}"/>
+                required="true" change=".v2OnLiveValidate" dateValue="{editModel>DiscontinuedDate}"/>
+            <Input id="v2NewProductRating" placeholder="{i18n>v2RatingInputPlaceholder}" type="Number" required="true" liveChange=".v2OnLiveValidate" value="{editModel>Rating}"/>
+            <Input id="v2NewProductPrice" placeholder="{i18n>v2PriceInputPlaceholder}" type="Number" required="true" liveChange=".v2OnLiveValidate" value="{editModel>Price}"/>
         </VBox>
 
         <beginButton>

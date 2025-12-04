@@ -1,0 +1,13 @@
+{
+    "columns": [
+      {"key": "", "text": "Regular Order"},
+      { "key": "ID", "text": "ID"},
+      { "key": "Name", "text": "Name"},
+      { "key": "Description", "text": "Description"},
+      { "key": "Release Date", "text": "Release Date"},
+      { "key": "Historical", "text": "Historical"},
+      { "key": "Discontinued Date", "text": "Discontinued Date"},
+      { "key": "Rating", "text": "Rating"},
+      { "key": "Price", "text": "Price"}
+    ]
+}

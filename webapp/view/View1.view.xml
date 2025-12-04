@@ -85,6 +85,13 @@
             </IconTabFilter>
 
             <IconTabFilter text="{i18n>oDataV2}" key="oDataV2">
+                <Toolbar>
+                    <ToolbarSpacer />
+                    <Label text="{i18n>v2SeatchBarLabel}"/>
+                    <SearchField id="searchByNameV2" placeholder="{i18n>v2SearchPlaceHolder}" width="30%" 
+                        liveChange=".onSearchByNameField"/>
+                </Toolbar>
+                
                 <Table id="productTableV2" items="{ 
                     path: 'oDataV2Model>/Products'}" 
                     mode="MultiSelect" growing="true" growingThreshold="50">
@@ -94,6 +101,10 @@
                             <ToolbarSpacer />
                             <Button  text="{i18n>v2AddNewRecord}" type="Accept" press="onAddRecordV2"/>
                             <Button text="{i18n>v2Delete}" type="Reject" press="onDeleteV2"/>
+                            <Select id="selectByColumnV2" width="200px" change=".onColumnSelectV2"
+                                items="{path: 'columnV2Model>/columns'}">
+                                <core:Item key="{columnV2Model>key}" text="{columnV2Model>text}" enabled="{enabled}"/>
+                            </Select>
                         </Toolbar>
                     </headerToolbar>
                 

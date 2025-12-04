@@ -78,6 +78,10 @@
         "type": "sap.ui.model.json.JSONModel",
         "uri": "model/genres.json"
       },
+      "columnV2Model": {
+        "type": "sap.ui.model.json.JSONModel",
+        "uri": "model/columnsV2.json"
+      },
       "oDataV2Model": {
         "type": "sap.ui.model.odata.v2.ODataModel",
         "dataSource": "ODataV2",
