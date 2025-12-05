@@ -251,7 +251,7 @@ sap.ui.define([
         },
 
         //////oDataV2//////
-        onDeleteV2: function() {
+        onDeleteRecordBtnPressV2: function() {
             var oTable = this.byId("productTableV2");
             var aItems = oTable.getSelectedItems().map(item => {
                 return item.getBindingContext("oDataV2Model").getObject()["ID"]
@@ -299,12 +299,12 @@ sap.ui.define([
         
 
         // Add Product V2
-        onAddRecordV2: async function () {
+        onAddRecordBtnPressV2: async function () {
             this._isEditMode = false;
             this._editedProductPath = null;
 
             const oModel = this.getModel("oDataV2Model");
-            const oDialog = await this._createV2addDialog();
+            const oDialog = await this._createAddDialogV2();
             const oContext = oModel.createEntry("/Products", {
                 properties: {
                     Name: "",
@@ -318,61 +318,24 @@ sap.ui.define([
             
             oDialog.setBindingContext(oContext, "oDataV2Model");
             
-            this._v2ResetDialogFields();
+            this._resetDialogFieldsV2();
             oDialog.open();
         },
-
-        // _v2ResetDialogState: function () {
-        //     this._isEditMode = false;
-        //     this._editedProductPath = null;
-
-        //     const oModel = this.getModel("oDataV2Model");
-        //     const oContext = oModel.createEntry("/Products", {
-        //         properties: {
-        //             Name: "",
-        //             Description: "",
-        //             ReleaseDate: null,
-        //             DiscontinuedDate: null,
-        //             Rating: 0,
-        //             Price: 0
-        //         }
-        //     });
-
-            
-
-        //     // const aBindings = [
-        //     //     { id: "v2NewProductName", property: "value" },
-        //     //     { id: "v2NewProductDescription", property: "value" },
-        //     //     { id: "v2NewProductReleaseDate", property: "dateValue" },
-        //     //     { id: "v2NewProductDiscontinuedDate", property: "dateValue" },
-        //     //     { id: "v2NewProductRating", property: "value" },
-        //     //     { id: "v2NewProductPrice", property: "value" }
-        //     // ];
         
-        //     // aBindings.forEach(b => {
-        //     //     const oControl = this.byId(b.id);
-        //     //     if (oControl) {
-        //     //         oControl.unbindProperty(b.property);
-        //     //     }
-        //     // });
-
-        //     this._v2ResetDialogFields();
-        // }, 
-        
-        _createV2addDialog: async function () {
+        _createAddDialogV2: async function () {
             if (!this._oV2AddDialog) {
                 this._oV2AddDialog = await this.loadFragment({
                   name: "project1.view.V2AddProductDialog",
                 });
                 
-                this._v2SetupValidators();
+                this._setupValidatorsV2();
                 this.getView().addDependent(this._oV2AddDialog);
             }
         
             return this._oV2AddDialog;
         },
 
-        v2CloseProduct: function() {
+        onDialogCancelBtnPressV2: function() {
             const oDialog = this._oV2AddDialog;
             const oModel = this.getModel("oDataV2Model");
             if(this._isEditMode && this._editedProductPath) {
@@ -386,37 +349,20 @@ sap.ui.define([
             
             this._isEditMode = false;
             this._editedProductPath = null;
-            // this._v2ResetDialogState();
             oDialog.close();
         },
 
-        v2SaveProduct: function () {
-            // if (!this._v2ValidateRequredFields()) {
-            //     return;
-            // }
+        onDialogSaveBtnPressV2: function () {
+            if (!this._validateRequredFieldsV2()) {
+                return;
+            }
 
             const oDialog = this._oV2AddDialog;
             const oModel = this.getModel("oDataV2Model");
         
-            // const sName = this.byId("v2NewProductName").getValue();
-            // const sDescription = this.byId("v2NewProductDescription").getValue();
-            // const sReleaseDate = this.byId("v2NewProductReleaseDate").getDateValue();
-            // const sDiscontinuedDate = this.byId("v2NewProductDiscontinuedDate").getDateValue();
-            // const sRating = this.byId("v2NewProductRating").getValue();
-            // const sPrice = this.byId("v2NewProductPrice").getValue();
-        
-             
-            // const oNewProduct = {
-            //     Name: sName,
-            //     Description: sDescription,
-            //     ReleaseDate: sReleaseDate,
-            //     DiscontinuedDate: sDiscontinuedDate,
-            //     Rating: Number(sRating),
-            //     Price: Number(sPrice)
-            // };
 
             if (this._isEditMode) {
-                oModel.submitChanges(/*this._editedProductPath, oNewProduct,*/ {
+                oModel.submitChanges({
                     success: () => {
                         const oBundle = this.getModel("i18n").getResourceBundle();
                         MessageToast.show(oBundle.getText("v2EditProductSuccess"));
@@ -424,64 +370,48 @@ sap.ui.define([
                         this._isEditMode = false;
                         this._editedProductPath = null;
             
-                        // oModel.refresh(true);
                         oDialog.close();
                     },
             
-                    error: (oError) => {
-                        const oBundle = this.getModel("i18n").getResourceBundle();
-                        const sFallback = oBundle.getText("v2EditProductError");
-                        let sErrorMessage = "";
-            
-                        try {
-                            if (oError?.responseText) {
-                                const oErrObj = JSON.parse(oError.responseText);
-                                sErrorMessage = oErrObj?.error?.message?.value || "";
-                            } else if (oError?.message) {
-                                sErrorMessage = oError.message;
-                            }
-                        } catch (e) {
-                            console.warn("Error parsing backend response:", e);
-                        }
-            
-                        MessageBox.error(sErrorMessage || sFallback);
-                    }
+                    error: (oError) => { this._showODataErrorV2(oError, "v2EditProductError");}
                 });
             
                 return;
             }            
         
         
-            oModel.submitChanges(/*"/Products", oNewProduct,*/ {
+            oModel.submitChanges({
                 success: () => {
                     const oBundle = this.getModel("i18n").getResourceBundle();
                     MessageToast.show(oBundle.getText("v2AddingProductSuccess"));
-                    // this._v2ResetDialogFields();  
-                    // oModel.refresh();
                     oDialog.close();
                 },
-                error: (oError) => {
-                    const oBundle = this.getModel("i18n").getResourceBundle();
-                    const sFallback = oBundle.getText("v2AddingProductError");
-                    let sErrorMessage = "";
-                
-                    try {
-                        if (oError?.responseText) {
-                            const oErrObj = JSON.parse(oError.responseText);
-                            sErrorMessage = oErrObj?.error?.message?.value || "";
-                        } else if (oError?.message) {
-                            sErrorMessage = oError.message;
-                        }
-                    } catch (e) {
-                        console.warn("Error parsing BE response:", e);
-                    }
-                
-                    MessageBox.error(sErrorMessage || sFallback);
+                error: (oError) => {this._showODataErrorV2(oError, "v2EditProductError");
                 }    
             });
         },
 
-        _v2SetupValidators: function() {
+        _showODataErrorV2: function (oError, sI18nKey) {
+            const oBundle = this.getModel("i18n").getResourceBundle();
+            const sFallback = oBundle.getText(sI18nKey);
+        
+            let sMessage = "";
+        
+            try {
+                if (oError?.responseText) {
+                    const oErrObj = JSON.parse(oError.responseText);
+                    sMessage = oErrObj?.error?.message?.value || "";
+                } else if (oError?.message) {
+                    sMessage = oError.message;
+                }
+            } catch (e) {
+                console.warn("Error parsing backend response:", e);
+            }
+        
+            MessageBox.error(sMessage || sFallback);
+        },
+
+        _setupValidatorsV2: function() {
             const oBundle = this.getModel("i18n").getResourceBundle();
             this._v2Validators = {
                 "v2NewProductName": { fn: v2Validations.isNotEmpty, msg: oBundle.getText('v2NameValidator') },
@@ -493,7 +423,7 @@ sap.ui.define([
             }
         },
 
-        v2OnLiveValidate: function(oEvent) {
+        onLiveValidationChangeV2: function(oEvent) {
             const oControl = oEvent.getSource();
             const sId = oControl.getId().split("--").pop();
             const validator = this._v2Validators[sId];
@@ -503,7 +433,7 @@ sap.ui.define([
             }
         },
 
-        _v2ValidateRequredFields: function () {
+        _validateRequredFieldsV2: function () {
             let bValid = true;
         
             for (let sId in this._v2Validators) {
@@ -520,44 +450,33 @@ sap.ui.define([
             return bValid;
         },
 
-        _v2ResetDialogFields: function() {
+        _resetDialogFieldsV2: function() {
             const aInputs = Object.keys(this._v2Validators);
             aInputs.forEach(id => {
                 const oControl = this.byId(id);
                 if (oControl) {
-                    // oControl.setValue("");
                     oControl.setValueState("None");
                 }
             });
         },
 
         //Edit button v2
-        v2OnEditInput: async function (oEvent) {
+        onEditBtnPressV2: async function (oEvent) {
             const oContext = oEvent.getSource().getBindingContext("oDataV2Model");
             const sPath = oContext.getPath();
         
             this._isEditMode = true;
             this._editedProductPath = sPath;
         
-            const oDialog = await this._createV2addDialog();
-        
-            const sBasePath = "oDataV2Model>" + sPath;
-        
-        
-            this.byId("v2NewProductName").bindProperty("value", sBasePath + "/Name");
-            this.byId("v2NewProductDescription").bindProperty("value", sBasePath + "/Description");
-            this.byId("v2NewProductReleaseDate").bindProperty("dateValue", sBasePath + "/ReleaseDate");
-            this.byId("v2NewProductDiscontinuedDate").bindProperty("dateValue", sBasePath + "/DiscontinuedDate");
-            this.byId("v2NewProductRating").bindProperty("value", sBasePath + "/Rating");
-            this.byId("v2NewProductPrice").bindProperty("value", sBasePath + "/Price");
+            const oDialog = await this._createAddDialogV2();
+            
+            oDialog.setBindingContext(oContext, "oDataV2Model");
         
             oDialog.open();
         },
         
-       
-
         //Search V2
-        onSearchByNameField: function (oEvent) {
+        onSearchByNameFieldLiveChangeV2: function (oEvent) {
             const oTable = this.byId("productTableV2");
             const oBinding = oTable.getBinding("items");   
             const sQuery = oEvent.getParameter("newValue");
@@ -571,7 +490,7 @@ sap.ui.define([
         },
         
         //Filter
-        onColumnSelectV2: function (oEvent) {
+        onColumnSelectChangeV2: function (oEvent) {
             const sKey = oEvent.getParameter("selectedItem").getKey(); 
             const oTable = this.byId("productTableV2");
             const oBinding = oTable.getBinding("items");

@@ -89,7 +89,7 @@
                     <ToolbarSpacer />
                     <Label text="{i18n>v2SeatchBarLabel}"/>
                     <SearchField id="searchByNameV2" placeholder="{i18n>v2SearchPlaceHolder}" width="30%" 
-                        liveChange=".onSearchByNameField"/>
+                        liveChange=".onSearchByNameFieldLiveChangeV2"/>
                 </Toolbar>
                 
                 <Table id="productTableV2" items="{ 
@@ -99,9 +99,9 @@
                     <headerToolbar>
                         <Toolbar >
                             <ToolbarSpacer />
-                            <Button  text="{i18n>v2AddNewRecord}" type="Accept" press="onAddRecordV2"/>
-                            <Button text="{i18n>v2Delete}" type="Reject" press="onDeleteV2"/>
-                            <Select id="selectByColumnV2" width="200px" change=".onColumnSelectV2"
+                            <Button  text="{i18n>v2AddNewRecord}" type="Accept" press="onAddRecordBtnPressV2"/>
+                            <Button text="{i18n>v2Delete}" type="Reject" press="onDeleteRecordBtnPressV2"/>
+                            <Select id="selectByColumnV2" width="200px" change=".onColumnSelectChangeV2"
                                 items="{path: 'columnV2Model>/columns'}">
                                 <core:Item key="{columnV2Model>key}" text="{columnV2Model>text}" enabled="{enabled}"/>
                             </Select>
@@ -128,7 +128,7 @@
                                 <Text text="{oDataV2Model>DiscontinuedDate}"/>
                                 <Text text="{oDataV2Model>Rating}"/>
                                 <Text text="{oDataV2Model>Price}"/>
-                                <Button text="{i18n>v2Edit}" press=".v2OnEditInput"/>
+                                <Button text="{i18n>v2Edit}" press=".onEditBtnPressV2"/>
                             </cells>
                         </ColumnListItem>
                     </items>
