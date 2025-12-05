@@ -3,7 +3,7 @@
     xmlns="sap.m"
     xmlns:core="sap.ui.core">
     <Page id="page" title="{i18n>title}">
-        <IconTabBar id="idIconTabBarIcons" class="sapUiResponsiveContentPadding">
+        <IconTabBar id="idIconTabBarIcons" selectedKey="oDataV2" class="sapUiResponsiveContentPadding">
         <items>
             <IconTabFilter text="{i18n>JSONModel}" key="JSONModel">
                 <content>
@@ -85,6 +85,13 @@
             </IconTabFilter>
 
             <IconTabFilter text="{i18n>oDataV2}" key="oDataV2">
+                <Toolbar>
+                    <ToolbarSpacer />
+                    <Label text="{i18n>v2SeatchBarLabel}"/>
+                    <SearchField id="searchByNameV2" placeholder="{i18n>v2SearchPlaceHolder}" width="30%" 
+                        liveChange=".onSearchByNameFieldLiveChangeV2"/>
+                </Toolbar>
+                
                 <Table id="productTableV2" items="{ 
                     path: 'oDataV2Model>/Products'}" 
                     mode="MultiSelect" growing="true" growingThreshold="50">
@@ -92,8 +99,12 @@
                     <headerToolbar>
                         <Toolbar >
                             <ToolbarSpacer />
-                            <Button  text="{i18n>v2AddNewRecord}" type="Accept" press="onAddRecordV2"/>
-                            <Button text="{i18n>v2Delete}" type="Reject" press="onDeleteV2"/>
+                            <Button  text="{i18n>v2AddNewRecord}" type="Accept" press="onAddRecordBtnPressV2"/>
+                            <Button text="{i18n>v2Delete}" type="Reject" press="onDeleteRecordBtnPressV2"/>
+                            <Select id="selectByColumnV2" width="200px" change=".onColumnSelectChangeV2"
+                                items="{path: 'columnV2Model>/columns'}">
+                                <core:Item key="{columnV2Model>key}" text="{columnV2Model>text}" enabled="{enabled}"/>
+                            </Select>
                         </Toolbar>
                     </headerToolbar>
                 
@@ -117,7 +128,7 @@
                                 <Text text="{oDataV2Model>DiscontinuedDate}"/>
                                 <Text text="{oDataV2Model>Rating}"/>
                                 <Text text="{oDataV2Model>Price}"/>
-                                <Button text="{i18n>v2Edit}" press=".v2OnEditInput"/>
+                                <Button text="{i18n>v2Edit}" press=".onEditBtnPressV2"/>
                             </cells>
                         </ColumnListItem>
                     </items>
