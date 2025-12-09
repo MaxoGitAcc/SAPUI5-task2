@@ -524,5 +524,16 @@ sap.ui.define([
             oBinding.sort(aSorters);
         },
         
+        //Products Page
+        onListProductPressed: function (oEvent) {
+            const oRouter = this.getOwnerComponent().getRouter();
+            const oProduct = oEvent.getSource();
+            const oContext = oProduct.getBindingContext("oDataV2Model");
+        
+            oRouter.navTo("Product", {
+                ProductID: oContext.getProperty("ID")
+            });
+        }
+        
     });
 });

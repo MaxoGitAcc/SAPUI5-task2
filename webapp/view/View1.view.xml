@@ -119,7 +119,7 @@
                         <Column><Text text="{i18n>v2Actions}"/></Column>
                     </columns>
                     <items>
-                        <ColumnListItem>
+                        <ColumnListItem type="Navigation" press=".onListProductPressed">
                             <cells>
                                 <Text text="{oDataV2Model>ID}"/>
                                 <Text text="{oDataV2Model>Name}"/>
