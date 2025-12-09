@@ -12,18 +12,18 @@ sap.ui.define([
     "sap/m/MessageToast",
     "project1/util/formatter",
     "sap/m/MessageBox",
-    "sap/ui/model/Sorter"
+    "sap/ui/model/Sorter",
 ], (BaseController, Validation, v2Validations, Filter, FilterOperator, Dialog, DialogType, Text, Button, Fragment, MessageToast, formatter, MessageBox, Sorter) => {
     "use strict";
 
     return BaseController.extend("project1.controller.View1", {
         onInit() {
-            var oBookModel = this.getOwnerComponent().getModel("bookModel1");
-            var oGenreModel = this.getOwnerComponent().getModel("genreModel");
+            const oBookModel = this.getOwnerComponent().getModel("bookModel1");
+            const oGenreModel = this.getOwnerComponent().getModel("genreModel");
         
             //Edit Mode 
             oBookModel.dataLoaded().then(() => {
-                var aBooks = oBookModel.getProperty("/books") || [];
+                let aBooks = oBookModel.getProperty("/books") || [];
         
                 aBooks.forEach(oBook => {
                     if (!oBook.editMode) {
@@ -35,9 +35,30 @@ sap.ui.define([
             });
         
             this._selectedGenre = oGenreModel.getProperty("/defaultGenre");
+
+            //Tab router
+            const oRouter = this.getOwnerComponent().getRouter();
+
+            oRouter.getRoute("RouteView1").attachPatternMatched(() => {
+                oRouter.navTo("tab", { tabName: "JSONModel" }, true);
+            });
+            oRouter.getRoute("tab").attachPatternMatched(this._onTabMatched, this);
         },
 
         formatter: formatter,
+
+        //links
+        _onTabMatched(oEvent) {
+            const tabName = oEvent.getParameter("arguments").tabName;
+      
+            const oIconTabBar = this.byId("idIconTabBarIcons");
+            oIconTabBar.setSelectedKey(tabName);
+          },
+      
+          onTabSelect(oEvent) {
+            const key = oEvent.getParameter("key");
+            this.getOwnerComponent().getRouter().navTo("tab", { tabName: key });
+          },
 
         //Buttons
         _createAddDialog: async function () {
@@ -48,8 +69,8 @@ sap.ui.define([
                 
                 this.getView().addDependent(this._oAddDialog);
 
-                var oComboBox = this.byId("newGenre");
-                var oBinding = oComboBox.getBinding("items");
+                const oComboBox = this.byId("newGenre");
+                const oBinding = oComboBox.getBinding("items");
                 if (oBinding) {
                     oBinding.filter(new Filter("isOnlyFilterOption", FilterOperator.NE, true));
                 }
@@ -100,13 +121,13 @@ sap.ui.define([
                 return;
             }
 
-            var oModel = this.getModel("bookModel1");
-            var aBooks = oModel.getProperty("/books");
-            var sName = this.byId("newName").getValue();
-            var sAuthor = this.byId("newAuthor").getValue();
-            var sGenre = this.byId("newGenre").getSelectedKey();
-            var sDate = this.byId("newDate").getValue();
-            var sQuantity = parseInt(this.byId("newQuantity").getValue()) || 0;
+            const oModel = this.getModel("bookModel1");
+            let aBooks = oModel.getProperty("/books");
+            const sName = this.byId("newName").getValue();
+            const sAuthor = this.byId("newAuthor").getValue();
+            const sGenre = this.byId("newGenre").getSelectedKey();
+            const sDate = this.byId("newDate").getValue();
+            const sQuantity = parseInt(this.byId("newQuantity").getValue()) || 0;
 
             const aExistingIDs = aBooks.map(b => b.ID);
             const newID = aExistingIDs.length ? Math.max(...aExistingIDs) + 1 : 1;
@@ -126,7 +147,7 @@ sap.ui.define([
             const oDialog = await this._createAddDialog();
             oDialog.close()
             
-            var oBundle = this.getModel("i18n").getResourceBundle();
+            const oBundle = this.getModel("i18n").getResourceBundle();
             MessageToast.show(oBundle.getText("addedNewBook"));
             
             this._resetDialogFields();
@@ -165,16 +186,16 @@ sap.ui.define([
                     beginButton: new Button({
                         text: "Yes",
                         press: function() {
-                            var oTable = this.byId("bookTable");
-                            var aSelectedItems = oTable.getSelectedItems();
-                            var oModel = this.getModel("bookModel1");
-                            var aBooks = oModel.getProperty("/books");
+                            const oTable = this.byId("bookTable");
+                            const aSelectedItems = oTable.getSelectedItems();
+                            const oModel = this.getModel("bookModel1");
+                            const aBooks = oModel.getProperty("/books");
                         
-                            var aSelectedIds = aSelectedItems.map(function(oItem) {
+                            const aSelectedIds = aSelectedItems.map(function(oItem) {
                                 return oItem.getBindingContext("bookModel1").getProperty("ID");
                             });
                         
-                            var aRemainingBooks = aBooks.filter(function(oBook) {
+                            const aRemainingBooks = aBooks.filter(function(oBook) {
                                 return !aSelectedIds.includes(oBook.ID);
                             });
                         
@@ -197,20 +218,20 @@ sap.ui.define([
         },
 
         onEditTitle: function(oEvent) {
-            var oContext = oEvent.getSource().getBindingContext("bookModel1");
-            var oModel = this.getModel("bookModel1");
+            const oContext = oEvent.getSource().getBindingContext("bookModel1");
+            const oModel = this.getModel("bookModel1");
         
             oModel.setProperty(oContext.getPath() + "/editMode", true);
         },
         
 
         onSaveTitle: function(oEvent) {
-            var oContext = oEvent.getSource().getBindingContext("bookModel1");
-            var oModel = this.getModel("bookModel1");
-            var sName = oModel.getProperty(oContext.getPath() + "/Name");
+            const oContext = oEvent.getSource().getBindingContext("bookModel1");
+            const oModel = this.getModel("bookModel1");
+            const sName = oModel.getProperty(oContext.getPath() + "/Name");
             
             if (!sName) {
-                var oBundle = this.getModel("i18n").getResourceBundle();
+                const oBundle = this.getModel("i18n").getResourceBundle();
                 MessageToast.show(oBundle.getText("changedTitleIncorectly"));
                 return;
             }
@@ -234,10 +255,10 @@ sap.ui.define([
 
 
         _applyTableFilters: function(sQuery) {
-            var oTable = this.byId("bookTable");
-            var oBinding = oTable.getBinding("items");
-            var aFilters = [];
-            var sDefaultGenre = this.getModel("genreModel").getProperty("/defaultGenre");
+            const oTable = this.byId("bookTable");
+            const oBinding = oTable.getBinding("items");
+            let aFilters = [];
+            const sDefaultGenre = this.getModel("genreModel").getProperty("/defaultGenre");
         
             if (sQuery) {
                 aFilters.push(new Filter("Name", FilterOperator.Contains, sQuery));
@@ -252,19 +273,19 @@ sap.ui.define([
 
         //////oDataV2//////
         onDeleteRecordBtnPressV2: function() {
-            var oTable = this.byId("productTableV2");
-            var aItems = oTable.getSelectedItems().map(item => {
+            const oTable = this.byId("productTableV2");
+            const aItems = oTable.getSelectedItems().map(item => {
                 return item.getBindingContext("oDataV2Model").getObject()["ID"]
             });
-            var oModel = this.getModel("oDataV2Model");
+            const oModel = this.getModel("oDataV2Model");
 
-            var iDeletedCount = 0;
+            let iDeletedCount = 0;
         
             aItems.forEach(id => {
-                var sPath = `/Products(${id})`
+                const sPath = `/Products(${id})`
                 oModel.remove(sPath, {
                     success: () => {
-                        var oBundle = this.getModel("i18n").getResourceBundle();
+                        const oBundle = this.getModel("i18n").getResourceBundle();
                         iDeletedCount++;
                         if(iDeletedCount === aItems.length) {
                             if(aItems.length > 1) {
@@ -277,7 +298,7 @@ sap.ui.define([
 
                     error: (oError) => {
                         let sErrorMessage = "";
-                        var oBundle = this.getModel("i18n").getResourceBundle();
+                        const oBundle = this.getModel("i18n").getResourceBundle();
                         const sFallback = oBundle.getText("v2ErrorAlert");
 
                         try {

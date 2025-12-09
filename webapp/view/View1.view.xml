@@ -3,7 +3,7 @@
     xmlns="sap.m"
     xmlns:core="sap.ui.core">
     <Page id="page" title="{i18n>title}">
-        <IconTabBar id="idIconTabBarIcons" selectedKey="oDataV2" class="sapUiResponsiveContentPadding">
+        <IconTabBar id="idIconTabBarIcons" class="sapUiResponsiveContentPadding" select=".onTabSelect">
         <items>
             <IconTabFilter text="{i18n>JSONModel}" key="JSONModel">
                 <content>
