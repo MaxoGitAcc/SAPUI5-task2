@@ -130,11 +130,10 @@
           "target": [
             "TargetView1"
           ]
-        },
-        {
-          "name": "tab",                
-          "pattern": "tab/{tabKey}",    
-          "target": ["TargetView1"]     
+        }, {
+          "name": "tab",
+          "pattern": "tab/{tabName}",
+          "target": "TargetView1"
         }
       ],
       "targets": {

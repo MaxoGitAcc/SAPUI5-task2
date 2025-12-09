@@ -13,16 +13,11 @@ sap.ui.define([
     "project1/util/formatter",
     "sap/m/MessageBox",
     "sap/ui/model/Sorter",
-    "sap/ui/core/routing/HashChanger"
-], (BaseController, Validation, v2Validations, Filter, FilterOperator, Dialog, DialogType, Text, Button, Fragment, MessageToast, formatter, MessageBox, Sorter, HashChanger) => {
+], (BaseController, Validation, v2Validations, Filter, FilterOperator, Dialog, DialogType, Text, Button, Fragment, MessageToast, formatter, MessageBox, Sorter) => {
     "use strict";
 
     return BaseController.extend("project1.controller.View1", {
         onInit() {
-            const oHashChanger = HashChanger.getInstance();
-            oHashChanger.attachEvent("hashChanged", this._onHashChange, this);
-            this._onHashChange();
-
             const oBookModel = this.getOwnerComponent().getModel("bookModel1");
             const oGenreModel = this.getOwnerComponent().getModel("genreModel");
         
@@ -40,29 +35,30 @@ sap.ui.define([
             });
         
             this._selectedGenre = oGenreModel.getProperty("/defaultGenre");
+
+            //Tab router
+            const oRouter = this.getOwnerComponent().getRouter();
+
+            oRouter.getRoute("RouteView1").attachPatternMatched(() => {
+                oRouter.navTo("tab", { tabName: "JSONModel" }, true);
+            });
+            oRouter.getRoute("tab").attachPatternMatched(this._onTabMatched, this);
         },
 
         formatter: formatter,
 
         //links
-        onTabSelected: function(oEvent) {
+        _onTabMatched(oEvent) {
+            const tabName = oEvent.getParameter("arguments").tabName;
+      
+            const oIconTabBar = this.byId("idIconTabBarIcons");
+            oIconTabBar.setSelectedKey(tabName);
+          },
+      
+          onTabSelect(oEvent) {
             const key = oEvent.getParameter("key");
-
-            const oHashChanger = HashChanger.getInstance();
-            oHashChanger.setHash(`tab/${key}`);
-        },
-
-        _onHashChange: function() {
-            const oHashChanger = HashChanger.getInstance();
-            const hash = oHashChanger.getHash();
-            const oTabBar = this.byId("idIconTabBarIcons");
-
-            const tabKey = hash.split("/")[1];
-            const validKeys = ["JSONModel", "oDataV2", "oDataV4"];
-            const correctKey = validKeys.includes(tabKey) ? tabKey : "JSONModel";
-
-            oTabBar.setSelectedKey(correctKey);
-        },
+            this.getOwnerComponent().getRouter().navTo("tab", { tabName: key });
+          },
 
         //Buttons
         _createAddDialog: async function () {
