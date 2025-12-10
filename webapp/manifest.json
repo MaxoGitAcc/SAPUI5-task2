@@ -134,13 +134,22 @@
           "name": "tab",
           "pattern": "tab/{tabName}",
           "target": "TargetView1"
+        }, {
+          "name": "Product",
+          "pattern": "Product/{ProductID}",
+          "target": "Product"
         }
       ],
       "targets": {
         "TargetView1": {
           "id": "View1",
           "name": "View1"
-        }
+        }, 
+        "Product": {
+          "id": "Product",
+          "name": "Product",
+          "level": 2
+        }        
       }
     },
     "rootView": {
