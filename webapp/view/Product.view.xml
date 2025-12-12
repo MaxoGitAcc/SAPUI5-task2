@@ -63,8 +63,7 @@
                     <ObjectPageSubSection>
                         <blocks>
 
-                            <m:Table id="supplierTable"
-                                    items="{supplierModelV2>/Suppliers}">
+                            <m:Table id="supplierTable">
 
                                 <m:columns>
                                     <m:Column><m:Label text="{i18n>ProductsSupplierID}"/></m:Column>
@@ -77,15 +76,15 @@
                                 </m:columns>
 
                                 <m:items>
-                                    <m:ColumnListItem>
+                                    <m:ColumnListItem  binding="{path:'oDataV2Model>Supplier'}">
                                         <m:cells>
-                                            <m:Text text="{supplierModelV2>ID}" />
-                                            <m:Text text="{supplierModelV2>Name}" />
-                                            <m:Text text="{supplierModelV2>Address/Street}" />
-                                            <m:Text text="{supplierModelV2>Address/City}" />
-                                            <m:Text text="{supplierModelV2>Address/State}" />
-                                            <m:Text text="{supplierModelV2>Address/ZipCode}" />
-                                            <m:Text text="{supplierModelV2>Address/Country}" />
+                                            <m:Text text="{oDataV2Model>ID}" />
+                                            <m:Text text="{oDataV2Model>Name}" />
+                                            <m:Text text="{oDataV2Model>Address/Street}" />
+                                            <m:Text text="{oDataV2Model>Address/City}" />
+                                            <m:Text text="{oDataV2Model>Address/State}" />
+                                            <m:Text text="{oDataV2Model>Address/ZipCode}" />
+                                            <m:Text text="{oDataV2Model>Address/Country}" />
                                         </m:cells>
                                     </m:ColumnListItem>
                                 </m:items>
