@@ -64,7 +64,7 @@
                         <blocks>
 
                             <m:Table id="supplierTable"
-                                    items="{path: 'oDataV2Model>Product'}">
+                                    items="{supplierModelV2>/Suppliers}">
 
                                 <m:columns>
                                     <m:Column><m:Label text="{i18n>ProductsSupplierID}"/></m:Column>
@@ -79,13 +79,13 @@
                                 <m:items>
                                     <m:ColumnListItem>
                                         <m:cells>
-                                            <m:Text text="{oDataV2Model>Supplier/ID}" />
-                                            <m:Text text="{oDataV2Model>Supplier/Name}" />
-                                            <m:Text text="{oDataV2Model>Supplier/Address/Street}" />
-                                            <m:Text text="{oDataV2Model>Supplier/Address/City}" />
-                                            <m:Text text="{oDataV2Model>Supplier/Address/State}" />
-                                            <m:Text text="{oDataV2Model>Supplier/Address/ZipCode}" />
-                                            <m:Text text="{oDataV2Model>Supplier/Address/Country}" />
+                                            <m:Text text="{supplierModelV2>ID}" />
+                                            <m:Text text="{supplierModelV2>Name}" />
+                                            <m:Text text="{supplierModelV2>Address/Street}" />
+                                            <m:Text text="{supplierModelV2>Address/City}" />
+                                            <m:Text text="{supplierModelV2>Address/State}" />
+                                            <m:Text text="{supplierModelV2>Address/ZipCode}" />
+                                            <m:Text text="{supplierModelV2>Address/Country}" />
                                         </m:cells>
                                     </m:ColumnListItem>
                                 </m:items>
