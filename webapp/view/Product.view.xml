@@ -1,7 +1,102 @@
 <mvc:View controllerName="project1.controller.Product"
     xmlns:mvc="sap.ui.core.mvc"
-    xmlns="sap.m"
-    xmlns:core="sap.ui.core">
+	xmlns="sap.uxap"
+	xmlns:m="sap.m"
+    xmlns:form="sap.ui.layout.form">
 
+    <ObjectPageLayout id="ObjectPageLayout">
     
+        <headerTitle>
+            <ObjectPageHeader objectTitle="{oDataV2Model>Name}"/>
+        </headerTitle>
+
+        <sections>
+            <ObjectPageSection title="{i18n>ProductSectionOne}">
+                <subSections>
+                    <ObjectPageSubSection>
+                        <blocks>
+
+                            <form:SimpleForm
+                                editable="false"
+                                layout="ResponsiveGridLayout"
+                                labelSpanXL="4"
+                                labelSpanL="3"
+                                labelSpanM="4"
+                                labelSpanS="12"
+                                adjustLabelSpan="false"
+                                emptySpanXL="0"
+                                emptySpanL="4"
+                                emptySpanM="0"
+                                emptySpanS="0"
+                                columnsXL="2"
+                                columnsL="1"
+                                columnsM="1"
+                                singleContainerFullSize="false">
+
+                                <form:content>
+                                    <m:Label text="Description"/>
+                                    <m:Text text="{oDataV2Model>Description}"/>
+
+                                    <m:Label text="Release Date"/>
+                                    <m:Text text="{oDataV2Model>ReleaseDate}"/>
+
+                                    <m:Label text="Discontinued Date"/>
+                                    <m:Text text="{oDataV2Model>DiscontinuedDate}"/>
+
+                                    <m:Label text="Rating"/>
+                                    <m:Text text="{oDataV2Model>Rating}"/>
+
+                                    <m:Label text="Price"/>
+                                    <m:Text text="{oDataV2Model>Price}"/>
+                                </form:content>
+
+                            </form:SimpleForm>
+
+                        </blocks>
+                    </ObjectPageSubSection>
+                </subSections>
+            </ObjectPageSection>
+
+            
+            <ObjectPageSection title="{i18n>ProductSectionTwo}">
+                <subSections>
+                    <ObjectPageSubSection>
+                        <blocks>
+
+                            <m:Table id="supplierTable">
+
+                                <m:columns>
+                                    <m:Column><m:Label text="{i18n>ProductsSupplierID}"/></m:Column>
+                                    <m:Column><m:Label text="{i18n>ProductsSupplierName}"/></m:Column>
+                                    <m:Column><m:Label text="{i18n>ProductsSupplierStreet}"/></m:Column>
+                                    <m:Column><m:Label text="{i18n>ProductsSupplierCity}"/></m:Column>
+                                    <m:Column><m:Label text="{i18n>ProductsSupplierState}"/></m:Column>
+                                    <m:Column><m:Label text="{i18n>ProductsSupplierZip}"/></m:Column>
+                                    <m:Column><m:Label text="{i18n>ProductsSupplierCountry}"/></m:Column>
+                                </m:columns>
+
+                                <m:items>
+                                    <m:ColumnListItem  binding="{path:'oDataV2Model>Supplier'}">
+                                        <m:cells>
+                                            <m:Text text="{oDataV2Model>ID}" />
+                                            <m:Text text="{oDataV2Model>Name}" />
+                                            <m:Text text="{oDataV2Model>Address/Street}" />
+                                            <m:Text text="{oDataV2Model>Address/City}" />
+                                            <m:Text text="{oDataV2Model>Address/State}" />
+                                            <m:Text text="{oDataV2Model>Address/ZipCode}" />
+                                            <m:Text text="{oDataV2Model>Address/Country}" />
+                                        </m:cells>
+                                    </m:ColumnListItem>
+                                </m:items>
+
+                            </m:Table>
+
+                        </blocks>
+                    </ObjectPageSubSection>
+                </subSections>
+            </ObjectPageSection>
+
+        </sections>
+
+    </ObjectPageLayout>
 </mvc:View>
