@@ -533,7 +533,49 @@ sap.ui.define([
             oRouter.navTo("Product", {
                 ProductID: oContext.getProperty("ID")
             });
-        }
-        
+        },
+
+
+        /////////oDataV4////////
+
+        //DelteBtnV4
+        onDeleteBtnPressV4: async function () {
+            const oTable = this.byId("productTableV4");
+            const aSelectedItems = oTable.getSelectedItems();
+            const aContexts = aSelectedItems.map(item => item.getBindingContext("oDataV4Model"));
+            
+            const oBundle = this.getModel("i18n").getResourceBundle();
+          
+            try {
+              await Promise.all(aContexts.map(ctx => ctx.delete()));
+          
+              MessageToast.show(
+                aContexts.length > 1
+                  ? oBundle.getText("v4SuccessAlertMultiple")
+                  : oBundle.getText("v4SuccessAlertSingle")
+              );
+          
+              oTable.removeSelections(true);
+          
+            } catch (oError) {
+                let sErrorMessage = "";
+                const sFallback = oBundle.getText("v4ErrorAlert");
+            
+                try {
+                    const sResponseText = oError?.responseText || oError?.cause?.responseText;
+            
+                    if (sResponseText) {
+                    const oErrObj = JSON.parse(sResponseText);
+                    sErrorMessage = oErrObj?.error?.message?.value || "";
+                    } else if (oError?.message) {
+                    sErrorMessage = oError.message;
+                    }
+                } catch (e) {
+                    console.warn("Error parsing response:", e);
+                }
+          
+              MessageBox.error(sErrorMessage || sFallback);
+            }
+          }
     });
 });
