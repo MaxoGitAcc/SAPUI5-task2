@@ -144,6 +144,7 @@
                     <headerToolbar>
                         <Toolbar>
                             <ToolbarSpacer />
+                            <Button text="{i18n>v4AddRecordBtn}" type="Accept" press=".onAddRecordBtnPressV4"/>
                             <Button text="{i18n>v4DeleteProductBtn}" type="Reject" press=".onDeleteBtnPressV4"/>
                         </Toolbar>
                     </headerToolbar>
