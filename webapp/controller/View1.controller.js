@@ -2,6 +2,7 @@ sap.ui.define([
     "project1/controller/BaseController",
     "project1/util/Validation",
     "project1/util/v2Validations",
+    "project1/util/v4Validations",
     "sap/ui/model/Filter",
     "sap/ui/model/FilterOperator",
     "sap/m/Dialog",
@@ -13,7 +14,7 @@ sap.ui.define([
     "project1/util/formatter",
     "sap/m/MessageBox",
     "sap/ui/model/Sorter",
-], (BaseController, Validation, v2Validations, Filter, FilterOperator, Dialog, DialogType, Text, Button, Fragment, MessageToast, formatter, MessageBox, Sorter) => {
+], (BaseController, Validation, v2Validations, v4Validations, Filter, FilterOperator, Dialog, DialogType, Text, Button, Fragment, MessageToast, formatter, MessageBox, Sorter) => {
     "use strict";
 
     return BaseController.extend("project1.controller.View1", {
@@ -576,6 +577,129 @@ sap.ui.define([
           
               MessageBox.error(sErrorMessage || sFallback);
             }
-          }
+        },
+
+        onAddRecordBtnPressV4: async function () {
+            const oDialog = await this._createAddDialogV4();
+            oDialog.open();
+        },
+
+        _createAddDialogV4: async function() {
+            if(!this._oAddDialogV4) {
+                this._oAddDialogV4 = await this.loadFragment({
+                    name: "project1.view.V4AddProductDialog",
+                })
+
+                this._setUpValidationsV4();
+                this.getView().addDependent(this._oAddDialogV4);
+            }
+            return this._oAddDialogV4;
+        },
+
+        onCancelDialogBtnV4: function() {
+            const oDialog = this._oAddDialogV4;
+            this._resetDialogFieldsV4();
+            oDialog.close();
+        }, 
+
+        onSaveDialogBtnV4: async function () {
+            if(!this._validateRequiredFieldsV4()) {
+                return;
+            }
+
+            const oModel = this.getModel("oDataV4Model");
+            const oBundle = this.getModel("i18n").getResourceBundle();
+
+            const oNewProduct = {
+                Name: this.byId("newProductNamev4").getValue(),
+                Description: this.byId("newProductDescriptionv4").getValue(),
+                ReleaseDate: this.byId("newProductReleaseDatev4").getDateValue(),
+                DiscontinuedDate: this.byId("newProductDiscontinuedDatev4").getDateValue(),
+                Rating: Number(this.byId("newProductRatingv4").getValue()) || 0,
+                Price: Number(this.byId("newProductPricev4").getValue()) || 0
+            };
+
+            try {
+                const oListBinding = oModel.bindList("/Products");
+                const oContext = oListBinding.create(oNewProduct);
+
+                await oContext.created();
+
+                const oTable = this.byId("productTableV4");
+                oTable.getBinding("items").refresh();
+
+                MessageToast.show(oBundle.getText("v4ProductAddedSuccessMsg"));
+
+                this._oAddDialogV4.close();
+                this._resetDialogFieldsV4();
+            } catch (oError) {
+                let sErrorMessage = "";
+                const sFallback = oBundle.getText("v4ErrorAlert");
+            
+                try {
+                    const sResponseText = oError?.responseText || oError?.cause?.responseText;
+            
+                    if (sResponseText) {
+                    const oErrObj = JSON.parse(sResponseText);
+                    sErrorMessage = oErrObj?.error?.message?.value || "";
+                    } else if (oError?.message) {
+                    sErrorMessage = oError.message;
+                    }
+                } catch (e) {
+                    console.warn("Error parsing response:", e);
+                }
+          
+              MessageBox.error(sErrorMessage || sFallback);
+            }
+        },
+
+        _setUpValidationsV4: function() {
+           this._v4Validators = {
+            "newProductNamev4": { fn: v4Validations.isNotEmpty, msg: "Name is required" },
+            "newProductDescriptionv4": { fn: v4Validations.isNotEmpty, msg: "Description is required" },
+            "newProductReleaseDatev4": { fn: v4Validations.isValidDate, msg: "Enter a valid date" },
+            "newProductDiscontinuedDatev4": { fn: v4Validations.isValidDate, msg: "Enter a valid date" },
+            "newProductRatingv4": { fn: v4Validations.isPositiveNumber, msg: "Enter a valid positive number" },
+            "newProductPricev4": { fn: v4Validations.isPositiveNumber, msg: "Enter a valid positive number" }
+           } 
+        },
+
+        onLiveValidationChangeV4: function(oEvent) {
+            const oControl = oEvent.getSource();
+            const sId = oControl.getId().split("--").pop();
+            const validator = this._v4Validators[sId];
+        
+            if (validator) {
+                validator.fn(oControl, validator.msg);
+            }
+        },
+
+        _validateRequiredFieldsV4: function() {
+            let bValid = true;
+        
+            for (let sId in this._v4Validators) {
+                const oControl = this.byId(sId);
+                const validator = this._v4Validators[sId];
+        
+                if (oControl && validator) {
+                    if (!validator.fn(oControl, validator.msg)) {
+                        bValid = false;
+                    }
+                }
+            }
+        
+            return bValid;
+        },
+
+        _resetDialogFieldsV4: function() {
+            const aInputs = Object.keys(this._v4Validators);
+            aInputs.forEach(id => {
+                const oControl = this.byId(id);
+                if (oControl) {
+                    oControl.setValue("");
+                    oControl.setValueState("None");
+                }
+            });
+        }
     });
 });
