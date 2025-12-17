@@ -1,8 +1,7 @@
 sap.ui.define([
     "project1/controller/BaseController",
     "project1/util/Validation",
-    "project1/util/v2Validations",
-    "project1/util/v4Validations",
+    "project1/util/MainValidations",
     "sap/ui/model/Filter",
     "sap/ui/model/FilterOperator",
     "sap/m/Dialog",
@@ -14,7 +13,7 @@ sap.ui.define([
     "project1/util/formatter",
     "sap/m/MessageBox",
     "sap/ui/model/Sorter",
-], (BaseController, Validation, v2Validations, v4Validations, Filter, FilterOperator, Dialog, DialogType, Text, Button, Fragment, MessageToast, formatter, MessageBox, Sorter) => {
+], (BaseController, Validation, MainValidations, Filter, FilterOperator, Dialog, DialogType, Text, Button, Fragment, MessageToast, formatter, MessageBox, Sorter) => {
     "use strict";
 
     return BaseController.extend("project1.controller.View1", {
@@ -436,12 +435,12 @@ sap.ui.define([
         _setupValidatorsV2: function() {
             const oBundle = this.getModel("i18n").getResourceBundle();
             this._v2Validators = {
-                "v2NewProductName": { fn: v2Validations.isNotEmpty, msg: oBundle.getText('v2NameValidator') },
-                "v2NewProductDescription": {fn: v2Validations.isNotEmpty, msg: oBundle.getText('v2DescriptionValidator')},
-                "v2NewProductReleaseDate": {fn: v2Validations.isValidDate, msg: oBundle.getText('v2ReleaseDateValidator')},
-                "v2NewProductDiscontinuedDate": {fn: v2Validations.isValidDate, msg: oBundle.getText('v2DiscontinuedDateValidator')},
-                "v2NewProductRating": {fn: v2Validations.isPositiveNumber, msg: oBundle.getText('v2RatingValidator')},
-                "v2NewProductPrice": {fn: v2Validations.isPositiveNumber, msg: oBundle.getText('v2PriceValidator')}
+                "v2NewProductName": { fn: MainValidations.isNotEmpty, msg: oBundle.getText('v2NameValidator') },
+                "v2NewProductDescription": {fn: MainValidations.isNotEmpty, msg: oBundle.getText('v2DescriptionValidator')},
+                "v2NewProductReleaseDate": {fn: MainValidations.isValidDate, msg: oBundle.getText('v2ReleaseDateValidator')},
+                "v2NewProductDiscontinuedDate": {fn: MainValidations.isValidDate, msg: oBundle.getText('v2DiscontinuedDateValidator')},
+                "v2NewProductRating": {fn: MainValidations.isPositiveNumber, msg: oBundle.getText('v2RatingValidator')},
+                "v2NewProductPrice": {fn: MainValidations.isPositiveNumber, msg: oBundle.getText('v2PriceValidator')}
             }
         },
 
@@ -655,12 +654,12 @@ sap.ui.define([
 
         _setUpValidationsV4: function() {
            this._v4Validators = {
-            "newProductNamev4": { fn: v4Validations.isNotEmpty, msg: "Name is required" },
-            "newProductDescriptionv4": { fn: v4Validations.isNotEmpty, msg: "Description is required" },
-            "newProductReleaseDatev4": { fn: v4Validations.isValidDate, msg: "Enter a valid date" },
-            "newProductDiscontinuedDatev4": { fn: v4Validations.isValidDate, msg: "Enter a valid date" },
-            "newProductRatingv4": { fn: v4Validations.isPositiveNumber, msg: "Enter a valid positive number" },
-            "newProductPricev4": { fn: v4Validations.isPositiveNumber, msg: "Enter a valid positive number" }
+            "newProductNamev4": { fn: MainValidations.isNotEmpty, msg: "Name is required" },
+            "newProductDescriptionv4": { fn: MainValidations.isNotEmpty, msg: "Description is required" },
+            "newProductReleaseDatev4": { fn: MainValidations.isValidDate, msg: "Enter a valid date" },
+            "newProductDiscontinuedDatev4": { fn: MainValidations.isValidDate, msg: "Enter a valid date" },
+            "newProductRatingv4": { fn: MainValidations.isPositiveNumber, msg: "Enter a valid positive number" },
+            "newProductPricev4": { fn: MainValidations.isPositiveNumber, msg: "Enter a valid positive number" }
            } 
         },
 
