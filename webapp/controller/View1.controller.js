@@ -580,6 +580,19 @@ sap.ui.define([
 
         onAddRecordBtnPressV4: async function () {
             const oDialog = await this._createAddDialogV4();
+            const oModel = this.getModel("oDataV4Model");
+            const oListBinding = oModel.bindList("/Products");
+
+            const oContext = oListBinding.create({
+                Name: "",
+                Description: "",
+                ReleaseDate: null,
+                DiscontinuedDate: null,
+                Rating: 0,
+                Price: 0
+            });
+
+            oDialog.setBindingContext(oContext, "oDataV4Model");
             oDialog.open();
         },
 
@@ -597,6 +610,19 @@ sap.ui.define([
 
         onCancelDialogBtnV4: function() {
             const oDialog = this._oAddDialogV4;
+            const oContext = oDialog.getBindingContext("oDataV4Model");
+            const oModel = this.getModel("oDataV4Model");
+
+            if (this._bEditModeV4) {
+              oModel.resetChanges("editGroup");
+            } else if (oContext){
+                oContext.delete();
+            }
+
+            this._bEditModeV4 = false;
+            this._oEditContextV4 = null;
+            oDialog.unbindElement("oDataV4Model");
+
             this._resetDialogFieldsV4();
             oDialog.close();
         }, 
@@ -606,31 +632,28 @@ sap.ui.define([
                 return;
             }
 
-            const oModel = this.getModel("oDataV4Model");
             const oBundle = this.getModel("i18n").getResourceBundle();
+            const oDialog = this._oAddDialogV4;
+            const oContext = oDialog.getBindingContext("oDataV4Model");
+            const oModel = this.getModel("oDataV4Model");
 
-            const oNewProduct = {
-                Name: this.byId("newProductNamev4").getValue(),
-                Description: this.byId("newProductDescriptionv4").getValue(),
-                ReleaseDate: this.byId("newProductReleaseDatev4").getDateValue(),
-                DiscontinuedDate: this.byId("newProductDiscontinuedDatev4").getDateValue(),
-                Rating: Number(this.byId("newProductRatingv4").getValue()) || 0,
-                Price: Number(this.byId("newProductPricev4").getValue()) || 0
-            };
-
-            try {
-                const oListBinding = oModel.bindList("/Products");
-                const oContext = oListBinding.create(oNewProduct);
-
-                await oContext.created();
-
+            try { 
+                if (this._bEditModeV4) {
+                    await oModel.submitBatch("editGroup");
+                    MessageToast.show(oBundle.getText("v4EditProductSuccessMsg"));
+                  } else {
+                    await oContext.created();
+                    MessageToast.show(oBundle.getText("v4ProductAddedSuccessMsg"));
+                  }
+        
+                this._bEditModeV4 = false;
+                this._oEditContextV4 = null;
+        
                 const oTable = this.byId("productTableV4");
                 oTable.getBinding("items").refresh();
-
-                MessageToast.show(oBundle.getText("v4ProductAddedSuccessMsg"));
-
-                this._oAddDialogV4.close();
+        
                 this._resetDialogFieldsV4();
+                oDialog.close();
             } catch (oError) {
                 let sErrorMessage = "";
                 const sFallback = oBundle.getText("v4ErrorAlert");
@@ -695,10 +718,26 @@ sap.ui.define([
             aInputs.forEach(id => {
                 const oControl = this.byId(id);
                 if (oControl) {
-                    oControl.setValue("");
                     oControl.setValueState("None");
                 }
             });
+        },
+
+        onEditBtnPressV4: async function (oEvent) {
+            const oContext = oEvent.getSource().getBindingContext("oDataV4Model");
+            const oDialog = await this._createAddDialogV4();
+          
+            oDialog.setBindingContext(oContext, "oDataV4Model");
+            oDialog.bindElement({
+              path: oContext.getPath(),
+              model: "oDataV4Model",
+              parameters: {$$updateGroupId: "editGroup"}
+            });
+          
+            this._bEditModeV4 = true;
+            this._oEditContextV4 = oContext;
+          
+            oDialog.open();
         }
     });
 });

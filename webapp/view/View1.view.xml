@@ -157,6 +157,7 @@
                         <Column><Text text="{i18n>v2DiscontinuedDate}"/></Column>
                         <Column><Text text="{i18n>v2Rating}"/></Column>
                         <Column><Text text="{i18n>v2Price}"/></Column>
+                        <Column><Text text="{i18n>v4Actions}"/></Column>
                     </columns>
                     <items>
                         <ColumnListItem>
@@ -168,6 +169,7 @@
                                 <Text text="{oDataV4Model>DiscontinuedDate}"/>
                                 <Text text="{oDataV4Model>Rating}"/>
                                 <Text text="{oDataV4Model>Price}"/>
+                                <Button text="{i18n>v4EditBtn}" press=".onEditBtnPressV4"/>
                             </cells>
                         </ColumnListItem>
                     </items>
