@@ -1,8 +1,7 @@
 sap.ui.define([
     "project1/controller/BaseController",
     "project1/util/Validation",
-    "project1/util/v2Validations",
-    "project1/util/v4Validations",
+    "project1/util/MainValidations",
     "sap/ui/model/Filter",
     "sap/ui/model/FilterOperator",
     "sap/m/Dialog",
@@ -14,7 +13,7 @@ sap.ui.define([
     "project1/util/formatter",
     "sap/m/MessageBox",
     "sap/ui/model/Sorter",
-], (BaseController, Validation, v2Validations, v4Validations, Filter, FilterOperator, Dialog, DialogType, Text, Button, Fragment, MessageToast, formatter, MessageBox, Sorter) => {
+], (BaseController, Validation, MainValidations, Filter, FilterOperator, Dialog, DialogType, Text, Button, Fragment, MessageToast, formatter, MessageBox, Sorter) => {
     "use strict";
 
     return BaseController.extend("project1.controller.View1", {
@@ -436,12 +435,12 @@ sap.ui.define([
         _setupValidatorsV2: function() {
             const oBundle = this.getModel("i18n").getResourceBundle();
             this._v2Validators = {
-                "v2NewProductName": { fn: v2Validations.isNotEmpty, msg: oBundle.getText('v2NameValidator') },
-                "v2NewProductDescription": {fn: v2Validations.isNotEmpty, msg: oBundle.getText('v2DescriptionValidator')},
-                "v2NewProductReleaseDate": {fn: v2Validations.isValidDate, msg: oBundle.getText('v2ReleaseDateValidator')},
-                "v2NewProductDiscontinuedDate": {fn: v2Validations.isValidDate, msg: oBundle.getText('v2DiscontinuedDateValidator')},
-                "v2NewProductRating": {fn: v2Validations.isPositiveNumber, msg: oBundle.getText('v2RatingValidator')},
-                "v2NewProductPrice": {fn: v2Validations.isPositiveNumber, msg: oBundle.getText('v2PriceValidator')}
+                "v2NewProductName": { fn: MainValidations.isNotEmpty, msg: oBundle.getText('v2NameValidator') },
+                "v2NewProductDescription": {fn: MainValidations.isNotEmpty, msg: oBundle.getText('v2DescriptionValidator')},
+                "v2NewProductReleaseDate": {fn: MainValidations.isValidDate, msg: oBundle.getText('v2ReleaseDateValidator')},
+                "v2NewProductDiscontinuedDate": {fn: MainValidations.isValidDate, msg: oBundle.getText('v2DiscontinuedDateValidator')},
+                "v2NewProductRating": {fn: MainValidations.isPositiveNumber, msg: oBundle.getText('v2RatingValidator')},
+                "v2NewProductPrice": {fn: MainValidations.isPositiveNumber, msg: oBundle.getText('v2PriceValidator')}
             }
         },
 
@@ -581,6 +580,19 @@ sap.ui.define([
 
         onAddRecordBtnPressV4: async function () {
             const oDialog = await this._createAddDialogV4();
+            const oModel = this.getModel("oDataV4Model");
+            const oListBinding = oModel.bindList("/Products");
+
+            const oContext = oListBinding.create({
+                Name: "",
+                Description: "",
+                ReleaseDate: null,
+                DiscontinuedDate: null,
+                Rating: 0,
+                Price: 0
+            });
+
+            oDialog.setBindingContext(oContext, "oDataV4Model");
             oDialog.open();
         },
 
@@ -598,6 +610,19 @@ sap.ui.define([
 
         onCancelDialogBtnV4: function() {
             const oDialog = this._oAddDialogV4;
+            const oContext = oDialog.getBindingContext("oDataV4Model");
+            const oModel = this.getModel("oDataV4Model");
+
+            if (this._bEditModeV4) {
+              oModel.resetChanges("editGroup");
+            } else if (oContext){
+                oContext.delete();
+            }
+
+            this._bEditModeV4 = false;
+            this._oEditContextV4 = null;
+            oDialog.unbindElement("oDataV4Model");
+
             this._resetDialogFieldsV4();
             oDialog.close();
         }, 
@@ -607,31 +632,29 @@ sap.ui.define([
                 return;
             }
 
-            const oModel = this.getModel("oDataV4Model");
             const oBundle = this.getModel("i18n").getResourceBundle();
+            const oDialog = this._oAddDialogV4;
+            const oContext = oDialog.getBindingContext("oDataV4Model");
+            const oModel = this.getModel("oDataV4Model");
 
-            const oNewProduct = {
-                Name: this.byId("newProductNamev4").getValue(),
-                Description: this.byId("newProductDescriptionv4").getValue(),
-                ReleaseDate: this.byId("newProductReleaseDatev4").getDateValue(),
-                DiscontinuedDate: this.byId("newProductDiscontinuedDatev4").getDateValue(),
-                Rating: Number(this.byId("newProductRatingv4").getValue()) || 0,
-                Price: Number(this.byId("newProductPricev4").getValue()) || 0
-            };
-
-            try {
-                const oListBinding = oModel.bindList("/Products");
-                const oContext = oListBinding.create(oNewProduct);
-
-                await oContext.created();
+            try { 
+                if (this._bEditModeV4) {
+                    await oModel.submitBatch("editGroup");
+                    MessageToast.show(oBundle.getText("v4EditProductSuccessMsg"));
+                  } else {
+                    await oContext.created();
+                    MessageToast.show(oBundle.getText("v4ProductAddedSuccessMsg"));
+                  }
+        
+                this._bEditModeV4 = false;
+                this._oEditContextV4 = null;
+                oDialog.unbindElement("oDataV4Model");
 
                 const oTable = this.byId("productTableV4");
                 oTable.getBinding("items").refresh();
-
-                MessageToast.show(oBundle.getText("v4ProductAddedSuccessMsg"));
-
-                this._oAddDialogV4.close();
+        
                 this._resetDialogFieldsV4();
+                oDialog.close();
             } catch (oError) {
                 let sErrorMessage = "";
                 const sFallback = oBundle.getText("v4ErrorAlert");
@@ -655,12 +678,12 @@ sap.ui.define([
 
         _setUpValidationsV4: function() {
            this._v4Validators = {
-            "newProductNamev4": { fn: v4Validations.isNotEmpty, msg: "Name is required" },
-            "newProductDescriptionv4": { fn: v4Validations.isNotEmpty, msg: "Description is required" },
-            "newProductReleaseDatev4": { fn: v4Validations.isValidDate, msg: "Enter a valid date" },
-            "newProductDiscontinuedDatev4": { fn: v4Validations.isValidDate, msg: "Enter a valid date" },
-            "newProductRatingv4": { fn: v4Validations.isPositiveNumber, msg: "Enter a valid positive number" },
-            "newProductPricev4": { fn: v4Validations.isPositiveNumber, msg: "Enter a valid positive number" }
+            "newProductNamev4": { fn: MainValidations.isNotEmpty, msg: "Name is required" },
+            "newProductDescriptionv4": { fn: MainValidations.isNotEmpty, msg: "Description is required" },
+            "newProductReleaseDatev4": { fn: MainValidations.isValidDate, msg: "Enter a valid date" },
+            "newProductDiscontinuedDatev4": { fn: MainValidations.isValidDate, msg: "Enter a valid date" },
+            "newProductRatingv4": { fn: MainValidations.isPositiveNumber, msg: "Enter a valid positive number" },
+            "newProductPricev4": { fn: MainValidations.isPositiveNumber, msg: "Enter a valid positive number" }
            } 
         },
 
@@ -696,10 +719,26 @@ sap.ui.define([
             aInputs.forEach(id => {
                 const oControl = this.byId(id);
                 if (oControl) {
-                    oControl.setValue("");
                     oControl.setValueState("None");
                 }
             });
+        },
+
+        onEditBtnPressV4: async function (oEvent) {
+            const oContext = oEvent.getSource().getBindingContext("oDataV4Model");
+            const oDialog = await this._createAddDialogV4();
+          
+            oDialog.setBindingContext(oContext, "oDataV4Model");
+            oDialog.bindElement({
+              path: oContext.getPath(),
+              model: "oDataV4Model",
+              parameters: {$$updateGroupId: "editGroup"}
+            });
+          
+            this._bEditModeV4 = true;
+            this._oEditContextV4 = oContext;
+          
+            oDialog.open();
         }
     });
 });

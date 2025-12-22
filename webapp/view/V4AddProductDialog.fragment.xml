@@ -5,19 +5,19 @@
     <Dialog id="v4AddProductDialog" title="Add new Product" contentWidth="400px">
     
         <VBox class="sapUi-Std-PaddingS">
-            <Input id="newProductNamev4" placeholder="{i18n>v4NameInputPlaceholder}" required="true" liveChange=".onLiveValidationChangeV4"/>
-            <Input id="newProductDescriptionv4" placeholder="{i18n>v4DescriptionInputPlaceholder}" required="true" liveChange=".onLiveValidationChangeV4"/>
+            <Input id="newProductNamev4" placeholder="{i18n>v4NameInputPlaceholder}" required="true" liveChange=".onL2iveValidationChangeV4" value="{oDataV4Model>Name}"/>
+            <Input id="newProductDescriptionv4" placeholder="{i18n>v4DescriptionInputPlaceholder}" required="true" liveChange=".onLiveValidationChangeV4" value="{oDataV4Model>Description}"/>
 
             <DatePicker id="newProductReleaseDatev4" placeholder="{i18n>v4ReleaseDateInputPlaceholder}"
                 displayFormat="dd-MM-yyyy"  valueFormat="yyyy-MM-dd" 
-                required="true" change=".onLiveValidationChangeV4"/>
+                required="true" change=".onLiveValidationChangeV4" dateValue="{oDataV4Model>ReleaseDate}"/>
 
             <DatePicker id="newProductDiscontinuedDatev4" placeholder="{i18n>v4DiscontinuedDateInputPlaceholder}"
                 displayFormat="dd-MM-yyyy" valueFormat="yyyy-MM-dd" 
-                required="true" change=".onLiveValidationChangeV4"/>
+                required="true" change=".onLiveValidationChangeV4" dateValue="{oDataV4Model>DiscontinuedDate}"/>
 
-            <Input id="newProductRatingv4" placeholder="{i18n>v4RatingInputPlaceholder}" required="true" liveChange=".onLiveValidationChangeV4"/>
-            <Input id="newProductPricev4" placeholder="{i18n>v4PriceInputPlaceholder}" required="true" liveChange=".onLiveValidationChangeV4"/>
+            <Input id="newProductRatingv4" placeholder="{i18n>v4RatingInputPlaceholder}" required="true" liveChange=".onLiveValidationChangeV4" value="{oDataV4Model>Rating}"/>
+            <Input id="newProductPricev4" placeholder="{i18n>v4PriceInputPlaceholder}" required="true" liveChange=".onLiveValidationChangeV4" value="{oDataV4Model>Price}"/>
         </VBox>
 
         <beginButton>

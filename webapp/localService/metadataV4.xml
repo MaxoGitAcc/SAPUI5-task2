@@ -8,8 +8,8 @@
 <Property Name="ID" Type="Edm.Int32" Nullable="false"/>
 <Property Name="Name" Type="Edm.String"/>
 <Property Name="Description" Type="Edm.String"/>
-<Property Name="ReleaseDate" Type="Edm.DateTimeOffset" Nullable="false"/>
-<Property Name="DiscontinuedDate" Type="Edm.DateTimeOffset"/>
+<Property Name="ReleaseDate" Type="Edm.Date" Nullable="false"/>
+<Property Name="DiscontinuedDate" Type="Edm.Date"/>
 <Property Name="Rating" Type="Edm.Int16" Nullable="false"/>
 <Property Name="Price" Type="Edm.Double" Nullable="false"/>
 <NavigationProperty Name="Categories" Type="Collection(ODataDemo.Category)" Partner="Products"/>
