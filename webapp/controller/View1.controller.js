@@ -648,7 +648,8 @@ sap.ui.define([
         
                 this._bEditModeV4 = false;
                 this._oEditContextV4 = null;
-        
+                oDialog.unbindElement("oDataV4Model");
+
                 const oTable = this.byId("productTableV4");
                 oTable.getBinding("items").refresh();
         
